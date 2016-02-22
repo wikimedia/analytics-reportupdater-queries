@@ -1,0 +1,46 @@
+reports:
+
+    desktop_and_mobile_web_by_browser:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
+        funnel: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week
+
+    desktop_and_mobile_web_by_os:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
+        funnel: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week
+
+    desktop_and_mobile_web_by_os_and_browser:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
+        funnel: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week
+
+    mobile_web_by_browser:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
+        funnel: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week
+
+    mobile_web_by_os:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
+        funnel: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week

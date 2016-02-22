@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import subprocess
+import sys
+import os
+
+query = """
+    SELECT
+        '{start_date}' AS date,
+        browser_family,
+        browser_major,
+        SUM(view_count) as view_count
+    FROM wmf.browser_general
+    WHERE
+        access_method IN ('desktop', 'mobile web') AND
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '{start_date}' AND
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '{end_date}'
+    GROUP BY
+        '{start_date}',
+        browser_family,
+        browser_major
+    ORDER BY view_count DESC
+    LIMIT 1000
+    ;
+""".format(
+    start_date=sys.argv[1],
+    end_date=sys.argv[2]
+)
+
+with open(os.devnull, 'w') as devnull:
+    subprocess.call(['hive', '-e', query], stderr=devnull)
