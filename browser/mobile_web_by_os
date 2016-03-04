@@ -1,32 +1,20 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-import subprocess
-import sys
-import os
-
-query = """
+#!/bin/bash
+beeline -u jdbc:hive2://analytics1015.eqiad.wmnet:10000 -n milimetric --silent=true --outputformat=tsv2 -e "
     SELECT
-        '{start_date}' AS date,
+        '$1' AS date,
         os_family,
         os_major,
         SUM(view_count) as view_count
     FROM wmf.browser_general
     WHERE
         access_method = 'mobile web' AND
-        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '{start_date}' AND
-        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '{end_date}'
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '$1' AND
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2'
     GROUP BY
-        '{start_date}',
+        '$1',
         os_family,
         os_major
     ORDER BY view_count DESC
     LIMIT 1000
     ;
-""".format(
-    start_date=sys.argv[1],
-    end_date=sys.argv[2]
-)
-
-with open(os.devnull, 'w') as devnull:
-    subprocess.call(['hive', '-e', query], stderr=devnull)
+"
