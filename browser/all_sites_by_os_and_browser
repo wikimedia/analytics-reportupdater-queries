@@ -1,5 +1,5 @@
 #!/bin/bash
-beeline -u jdbc:hive2://analytics1015.eqiad.wmnet:10000 -n milimetric --silent=true --outputformat=tsv2 -e "
+hive -e "
     SELECT
         '$1' AS date,
         os_family,
@@ -21,4 +21,4 @@ beeline -u jdbc:hive2://analytics1015.eqiad.wmnet:10000 -n milimetric --silent=t
     ORDER BY view_count DESC
     LIMIT 1000
     ;
-"
+" 2> /dev/null

@@ -1,6 +1,6 @@
 reports:
 
-    desktop_and_mobile_web_by_browser:
+    all_sites_by_browser_family_and_major:
         type: script
         frequency: weeks
         granularity: weeks
@@ -9,7 +9,7 @@ reports:
         starts: 2015-06-07
         lag: 86400 # wait 1 day to compute last week
 
-    desktop_and_mobile_web_by_os:
+    all_sites_by_os_family_and_major:
         type: script
         frequency: weeks
         granularity: weeks
@@ -18,7 +18,7 @@ reports:
         starts: 2015-06-07
         lag: 86400 # wait 1 day to compute last week
 
-    desktop_and_mobile_web_by_os_and_browser:
+    all_sites_by_os_and_browser:
         type: script
         frequency: weeks
         granularity: weeks
@@ -27,7 +27,7 @@ reports:
         starts: 2015-06-07
         lag: 86400 # wait 1 day to compute last week
 
-    mobile_web_by_browser:
+    mobile_site_by_browser_family_and_major:
         type: script
         frequency: weeks
         granularity: weeks
@@ -36,11 +36,43 @@ reports:
         starts: 2015-06-07
         lag: 86400 # wait 1 day to compute last week
 
-    mobile_web_by_os:
+    mobile_site_by_os_family_and_major:
         type: script
         frequency: weeks
         granularity: weeks
         timeboxed: true
         funnel: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week
+
+    all_sites_by_browser_family:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week
+
+    all_sites_by_os_family:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week
+
+    mobile_site_by_browser_family:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week
+
+    mobile_site_by_os_family:
+        type: script
+        frequency: weeks
+        granularity: weeks
+        timeboxed: true
         starts: 2015-06-07
         lag: 86400 # wait 1 day to compute last week
