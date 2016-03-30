@@ -13,7 +13,12 @@ for row in reader:
 	else:
 		date, category, value = row
 		dates.add(date)
-		pivoted[category][date] += int(value)
+		try:
+			number = int(value)
+		except:
+			number = float(value)
+		finally:
+			pivoted[category][date] += number
 
 categories = sorted(pivoted.keys())
 print header[0] + '\t' + '\t'.join(categories)
