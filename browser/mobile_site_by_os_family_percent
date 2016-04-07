@@ -17,7 +17,7 @@ hive -e "
     SELECT
         '$1' AS date,
         os_family,
-        SUM(view_count) * 100 / view_count_total AS percent
+        SUM(view_count) / view_count_total AS percent
     FROM slice JOIN total
     GROUP BY
         '$1',
