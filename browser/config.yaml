@@ -93,3 +93,23 @@ reports:
         granularity: weeks
         starts: 2015-06-07
         lag: 86400 # wait 1 day to compute last week
+
+    desktop_site_by_os_family_and_major:
+        type: script
+        granularity: weeks
+        funnel: true
+        starts: 2017-01-01
+        lag: 86400 # wait 1 day to compute last week
+
+    desktop_site_by_os_family_and_major_percent:
+        type: script
+        granularity: weeks
+        funnel: true
+        starts: 2017-01-01
+        lag: 86400 # wait 1 day to compute last week
+
+    desktop_site_by_os_family_percent:
+        type: script
+        granularity: weeks
+        starts: 2017-01-01
+        lag: 86400 # wait 1 day to compute last week
