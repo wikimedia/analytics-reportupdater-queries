@@ -1,0 +1,31 @@
+#!/bin/bash
+hive -e "
+    SET hive.mapred.mode = nonstrict;
+    WITH
+        slice AS (
+            SELECT *
+            FROM wmf.browser_general
+            WHERE
+                access_method = 'desktop' AND
+                CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '$1' AND
+                CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2'
+        ),
+        total AS (
+            SELECT SUM(view_count) as view_count_total
+            FROM slice
+        )
+    SELECT
+        '$1' AS date,
+        os_family,
+        os_major,
+        SUM(view_count) / view_count_total AS percent
+    FROM slice JOIN total
+    GROUP BY
+        '$1',
+        os_family,
+        os_major,
+        view_count_total
+    ORDER BY percent DESC
+    LIMIT 1000
+    ;
+" 2> /dev/null | grep -v parquet.hadoop
