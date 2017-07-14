@@ -127,3 +127,9 @@ reports:
         starts: 2015-06-07
         lag: 86400 # wait 1 day to compute last week
 
+    desktop_site_by_browser_family_and_major:
+        type: script
+        granularity: weeks
+        funnel: true
+        starts: 2015-06-07
+        lag: 86400 # wait 1 day to compute last week

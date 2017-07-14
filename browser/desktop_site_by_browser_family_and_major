@@ -1,0 +1,20 @@
+#!/bin/bash
+hive -e "
+    SELECT
+        '$1' AS date,
+        browser_family,
+        browser_major,
+        SUM(view_count) as view_count
+    FROM wmf.browser_general
+    WHERE
+        access_method = 'desktop' AND
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '$1' AND
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2'
+    GROUP BY
+        '$1',
+        browser_family,
+        browser_major
+    ORDER BY view_count DESC
+    LIMIT 1000
+    ;
+" 2> /dev/null | grep -v parquet.hadoop
