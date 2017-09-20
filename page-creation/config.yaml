@@ -62,3 +62,10 @@ reports:
         lag: 3600 # this can wait an hour
         explode_by:
             wiki_db: enwiki
+
+    pagecreations_draft:
+        granularity: days
+        starts: 2017-07-21
+        lag: 3600 # this can wait an hour
+        explode_by:
+            wiki_db: enwiki
