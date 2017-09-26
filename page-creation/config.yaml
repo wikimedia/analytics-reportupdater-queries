@@ -4,7 +4,7 @@
 
 databases:
     dbstore:
-        host: "analytics-store.eqiad.wmnet"
+        host: "analytics-slave.eqiad.wmnet"
         port: 3306
         creds_file: /etc/mysql/conf.d/stats-research-client.cnf
         db: log
