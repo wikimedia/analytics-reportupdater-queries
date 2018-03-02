@@ -1,0 +1,39 @@
+databases:
+  dbstore:
+    host: analytics-slave.eqiad.wmnet
+    port: 3306
+    creds_file: /etc/mysql/conf.d/research-client.cnf
+    db: log
+
+defaults:
+  db: dbstore
+
+reports:
+  database:
+    granularity: weeks
+    starts: 2017-03-28
+  version:
+    granularity: weeks
+    starts: 2017-03-28
+    funnel: true
+  version_simple:
+    granularity: weeks
+    starts: 2017-03-28
+  php:
+    granularity: weeks
+    starts: 2017-03-28
+  os:
+    granularity: weeks
+    starts: 2017-03-28
+  arch:
+    granularity: weeks
+    starts: 2017-03-28
+  machine:
+    granularity: weeks
+    starts: 2017-03-28
+  serverSoftware:
+    granularity: weeks
+    starts: 2017-03-28
+  memoryLimit:
+    granularity: weeks
+    starts: 2017-03-28
