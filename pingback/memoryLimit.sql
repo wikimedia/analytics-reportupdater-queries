@@ -1,13 +1,13 @@
 SELECT
 	DATE('{from_timestamp}') AS date,
-	SUM(normalizedMemoryLimit > 0 AND normalizedMemoryLimit <= 1) AS '<= 1M',
-	SUM(normalizedMemoryLimit > 1 AND normalizedMemoryLimit <= 32) AS '> 1M and <= 32M',
-	SUM(normalizedMemoryLimit > 32 AND normalizedMemoryLimit <= 64) AS '> 32M and <= 64M',
-	SUM(normalizedMemoryLimit > 64 AND normalizedMemoryLimit <= 128) AS '> 64M and <= 128M',
-	SUM(normalizedMemoryLimit > 128 AND normalizedMemoryLimit <= 256) AS '> 128M and <= 256M',
-	SUM(normalizedMemoryLimit > 256 AND normalizedMemoryLimit <= 512) AS '> 256M and <= 512M',
-	SUM(normalizedMemoryLimit > 512 AND normalizedMemoryLimit <= 1024) AS '> 512M and <= 1G',
-	SUM(normalizedMemoryLimit > 1024) AS '> 1G',
+	SUM(normalizedMemoryLimit > 0 AND normalizedMemoryLimit <= 1) AS 'limit <= 1M',
+	SUM(normalizedMemoryLimit > 1 AND normalizedMemoryLimit <= 32) AS '1M < limit <= 32M',
+	SUM(normalizedMemoryLimit > 32 AND normalizedMemoryLimit <= 64) AS '32M < limit <= 64M',
+	SUM(normalizedMemoryLimit > 64 AND normalizedMemoryLimit <= 128) AS '64M < limit <= 128M',
+	SUM(normalizedMemoryLimit > 128 AND normalizedMemoryLimit <= 256) AS '128M < limit <= 256M',
+	SUM(normalizedMemoryLimit > 256 AND normalizedMemoryLimit <= 512) AS '256M < limit <= 512M',
+	SUM(normalizedMemoryLimit > 512 AND normalizedMemoryLimit <= 1024) AS '512M < limit <= 1G',
+	SUM(normalizedMemoryLimit > 1024) AS 'limit > 1G',
 	SUM(normalizedMemoryLimit < 0) AS 'Non-numeric'
 FROM
 	( SELECT

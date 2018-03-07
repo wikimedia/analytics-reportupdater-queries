@@ -9,6 +9,9 @@ defaults:
   db: dbstore
 
 reports:
+  count:
+    granularity: weeks
+    starts: 2017-03-28
   database:
     granularity: weeks
     starts: 2017-03-28
