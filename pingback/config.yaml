@@ -25,6 +25,11 @@ reports:
   php:
     granularity: weeks
     starts: 2017-03-28
+  php_drilldown:
+    granularity: weeks
+    starts: 2017-03-28
+    explode_by:
+      MediaWiki_Version: 1.28, 1.29, 1.30, 1.31, 1.32
   os:
     granularity: weeks
     starts: 2017-03-28
