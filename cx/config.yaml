@@ -1,0 +1,15 @@
+reports:
+    daily_abuse_filter_count:
+        granularity: days
+        starts: 2018-10-26
+        lag: 3600 # wait 1 hour to compute last day
+
+databases:
+    analytics-research-client:
+        host: analytics-slave.eqiad.wmnet
+        port: 3306
+        creds_file: /etc/mysql/conf.d/stats-research-client.cnf
+        db: staging
+
+defaults:
+    db: analytics-research-client

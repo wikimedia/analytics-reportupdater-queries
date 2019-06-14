@@ -1,0 +1,17 @@
+reports:
+
+    mt_engines:
+        granularity: weeks
+        funnel: true
+        starts: 2016-01-18
+        lag: 86400 # wait 1 day to compute last week
+
+databases:
+    wikishared:
+        auto_find_db_shard: true
+        use_x1: true
+        creds_file: /etc/mysql/conf.d/stats-research-client.cnf
+        db: wikishared
+
+defaults:
+    db: wikishared

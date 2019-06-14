@@ -1,0 +1,42 @@
+databases:
+    el:
+        host: "analytics-slave.eqiad.wmnet"
+        port: 3306
+        creds_file: /etc/mysql/conf.d/stats-research-client.cnf
+        db: log
+    flow:
+        auto_find_db_shard: true
+        use_x1: true
+        creds_file: /etc/mysql/conf.d/stats-research-client.cnf
+        db: flowdb
+defaults:
+    db: flow
+
+reports:
+    active-boards:
+        granularity: weeks
+        starts: 2009-11-08
+    active-topics:
+        granularity: weeks
+        starts: 2009-11-08
+    created-topics:
+        granularity: weeks
+        starts: 2009-11-08
+    messages-posted:
+        granularity: weeks
+        starts: 2009-11-08
+    moderation-actions:
+        granularity: weeks
+        starts: 2009-11-08
+    unique-users:
+        granularity: weeks
+        starts: 2009-11-08
+    top-reply-link:
+        granularity: days
+        starts: 2014-12-08
+        db: el
+    flow-replies-summary:
+        granularity: days
+        funnel: true
+        starts: 2014-12-08
+        db: el

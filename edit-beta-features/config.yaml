@@ -1,0 +1,15 @@
+databases:
+    mediawiki:
+        auto_find_db_shard: true
+        wiki_db_placeholder: wiki_db
+        creds_file: /etc/mysql/conf.d/stats-research-client.cnf
+
+defaults:
+    db: mediawiki
+
+reports:
+    new_wikitext_editor_beta:
+        granularity: days
+        starts: 2017-03-17
+        explode_by:
+            wiki_db: new_wikitext_editor_dbs.txt
