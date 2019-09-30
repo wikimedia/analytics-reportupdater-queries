@@ -11,21 +11,9 @@ reports:
         lag: 86400 # wait 1 day to compute last week
         db: wikishared
 
-    pages_with_unreviewed_translations:
-        granularity: weeks
-        starts: 2018-01-01
-        lag: 86400 # wait 1 day to compute last week
-        db: eventlogging
-
 databases:
     wikishared:
         auto_find_db_shard: true
         use_x1: true
         creds_file: /etc/mysql/conf.d/stats-research-client.cnf
         db: wikishared
-
-    eventlogging:
-        host: "analytics-slave.eqiad.wmnet"
-        port: 3306
-        creds_file: /etc/mysql/conf.d/stats-research-client.cnf
-        db: log

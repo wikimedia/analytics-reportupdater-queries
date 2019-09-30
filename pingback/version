@@ -1,0 +1,45 @@
+#!/bin/bash
+hive -e "
+SET hive.mapred.mode = nonstrict;
+WITH results AS (
+    SELECT
+        '$1' AS date,
+        CASE
+            WHEN event.MediaWiki RLIKE '^[0-9]+\\.[0-9]+\\.[0-9]+\$'
+                THEN event.MediaWiki
+            WHEN event.MediaWiki RLIKE '^[0-9]+\\.[0-9]+\\.[0-9]+-wmf'
+                THEN CONCAT(SUBSTR(event.MediaWiki, 0, LOCATE('-wmf', event.MediaWiki) - 1), ' (WMF)')
+            WHEN event.MediaWiki RLIKE '^[0-9]+\\.[0-9]+\\.[0-9]+-rc'
+                THEN CONCAT(SUBSTR(event.MediaWiki, 0, LOCATE('-rc', event.MediaWiki) - 1), ' (RC)')
+            WHEN event.MediaWiki RLIKE '^[0-9]+\\.[0-9]+\\.[0-9]+-alpha'
+                THEN CONCAT(SUBSTR(event.MediaWiki, 0, LOCATE('-alpha', event.MediaWiki) - 1), ' (ALPHA)')
+            ELSE SUBSTR(event.MediaWiki, 0, 6)
+        END AS version
+    FROM event.mediawikipingback AS alltime
+    JOIN (
+        SELECT
+            MAX(seqid) AS seqid
+        FROM event.mediawikipingback
+        WHERE
+            CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
+            (event.\`database\` LIKE 'mysql%' OR NOT (
+                event.MediaWiki LIKE '1.31.0%' OR
+                event.MediaWiki = '1.32.0-alpha'
+            ))
+        GROUP BY wiki
+    ) AS latest
+    ON (alltime.seqid = latest.seqid)
+    WHERE
+        event.MediaWiki != ''
+)
+SELECT
+    date,
+    version,
+    COUNT(*) as count
+FROM results
+GROUP BY
+    date,
+    version
+ORDER BY count DESC
+;
+" 2> /dev/null | grep -v parquet.hadoop

@@ -1,0 +1,23 @@
+#!/bin/bash
+hive -e "
+select
+  '$1' as date,
+  count(distinct(concat(
+    event.sourceLanguage,
+    ':',
+    event.sourceTitle,
+    ' to ',
+    event.targetLanguage,
+    ':',
+    event.targetTitle,
+    ' by ',
+    event.token)
+  )) as pages_with_unreviewed_translations
+from
+  event.contenttranslation
+where
+  event.action = 'need-review' and
+  concat(year, '-', lpad(month, 2, '0'), '-', lpad(day, 2, '0')) >= '$1' and
+  concat(year, '-', lpad(month, 2, '0'), '-', lpad(day, 2, '0')) < '$2'
+;
+" 2> /dev/null | grep -v parquet.hadoop

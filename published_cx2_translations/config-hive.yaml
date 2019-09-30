@@ -1,0 +1,6 @@
+reports:
+    pages_with_unreviewed_translations:
+        type: script
+        granularity: weeks
+        starts: 2018-01-01
+        lag: 86400 # wait 1 day to compute last week

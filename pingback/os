@@ -1,0 +1,39 @@
+#!/bin/bash
+hive -e "
+SET hive.mapred.mode = nonstrict;
+SELECT
+    '$1' AS date,
+    SUM(IF(event.OS LIKE 'Linux%', 1, 0)) AS \`Linux\`,
+    SUM(IF(event.OS LIKE 'WINNT%', 1, 0)) AS \`WINNT\`,
+    SUM(IF(event.OS LIKE 'Darwin%', 1, 0)) AS \`Darwin\`,
+    SUM(IF(event.OS LIKE 'FreeBSD%', 1, 0)) AS \`FreeBSD\`,
+    SUM(IF(event.OS LIKE 'SunOS%', 1, 0)) AS \`SunOS\`,
+    SUM(IF(event.OS LIKE 'CYGWIN%', 1, 0)) AS \`CYGWIN\`,
+    SUM(IF(event.OS LIKE 'NetBSD%', 1, 0)) AS \`NetBSD\`,
+    SUM(IF(event.OS LIKE 'OpenBSD%', 1, 0)) AS \`OpenBSD\`,
+    SUM(IF(event.OS NOT LIKE 'Linux%' AND
+        event.OS NOT LIKE 'WINNT%' AND
+        event.OS NOT LIKE 'Darwin%' AND
+        event.OS NOT LIKE 'FreeBSD%' AND
+        event.OS NOT LIKE 'SunOS%' AND
+        event.OS NOT LIKE 'CYGWIN%' AND
+        event.OS NOT LIKE 'NetBSD%' AND
+        event.OS NOT LIKE 'OpenBSD%', 1, 0)) AS \`Other\`
+FROM event.mediawikipingback AS alltime
+JOIN (
+    SELECT
+        MAX(seqid) AS seqid
+    FROM event.mediawikipingback
+    WHERE
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
+        (event.\`database\` LIKE 'mysql%' OR NOT (
+            event.MediaWiki LIKE '1.31.0%' OR
+            event.MediaWiki = '1.32.0-alpha'
+        ))
+    GROUP BY wiki
+) AS latest
+ON (alltime.seqid = latest.seqid)
+WHERE
+    event.OS != ''
+;
+" 2> /dev/null | grep -v parquet.hadoop

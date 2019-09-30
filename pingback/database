@@ -1,0 +1,31 @@
+#!/bin/bash
+hive -e "
+SET hive.mapred.mode = nonstrict;
+SELECT
+    '$1' AS date,
+    SUM(IF(event.\`database\` LIKE 'mysql%', 1, 0)) AS \`mysql\`,
+    SUM(IF(event.\`database\` = 'sqlite', 1, 0)) AS \`sqlite\`,
+    SUM(IF(event.\`database\` = 'postgres', 1, 0)) AS \`postgres\`,
+    SUM(IF(event.\`database\` = 'mssql', 1, 0)) AS \`mssql\`,
+    SUM(IF(event.\`database\` NOT LIKE 'mysql%' AND
+        event.\`database\` != 'sqlite' AND
+        event.\`database\` != 'postgres' AND
+        event.\`database\` != 'mssql', 1, 0)) AS \`Other\`
+FROM event.mediawikipingback AS alltime
+JOIN (
+    SELECT
+        MAX(seqid) AS seqid
+    FROM event.mediawikipingback
+    WHERE
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
+        (event.\`database\` LIKE 'mysql%' OR NOT (
+            event.MediaWiki LIKE '1.31.0%' OR
+            event.MediaWiki = '1.32.0-alpha'
+        ))
+    GROUP BY wiki
+) AS latest
+ON (alltime.seqid = latest.seqid)
+WHERE
+    event.\`database\` != ''
+;
+" 2> /dev/null | grep -v parquet.hadoop

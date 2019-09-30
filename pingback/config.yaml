@@ -1,47 +1,48 @@
-databases:
-  dbstore:
-    host: analytics-slave.eqiad.wmnet
-    port: 3306
-    creds_file: /etc/mysql/conf.d/stats-research-client.cnf
-    db: log
-
-defaults:
-  db: dbstore
-
 reports:
   count:
+    type: script
     granularity: weeks
     starts: 2017-03-28
   database:
+    type: script
     granularity: weeks
     starts: 2017-03-28
   version:
+    type: script
     granularity: weeks
     starts: 2017-03-28
     funnel: true
   version_simple:
+    type: script
     granularity: weeks
     starts: 2017-03-28
   php:
+    type: script
     granularity: weeks
     starts: 2017-03-28
   php_drilldown:
+    type: script
     granularity: weeks
     starts: 2017-03-28
     explode_by:
       MediaWiki_Version: 1.28, 1.29, 1.30, 1.31, 1.32
   os:
+    type: script
     granularity: weeks
     starts: 2017-03-28
   arch:
+    type: script
     granularity: weeks
     starts: 2017-03-28
   machine:
+    type: script
     granularity: weeks
     starts: 2017-03-28
   serverSoftware:
+    type: script
     granularity: weeks
     starts: 2017-03-28
   memoryLimit:
+    type: script
     granularity: weeks
     starts: 2017-03-28

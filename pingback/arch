@@ -1,0 +1,26 @@
+#!/bin/bash
+hive -e "
+SET hive.mapred.mode = nonstrict;
+SELECT
+    '$1' AS date,
+    SUM(IF(event.arch = 32, 1, 0)) AS \`32\`,
+    SUM(IF(event.arch = 64, 1, 0)) AS \`64\`,
+    SUM(IF(event.arch != 32 AND event.arch != 64, 1, 0)) AS \`Other\`
+FROM event.mediawikipingback AS alltime
+JOIN (
+    SELECT
+        MAX(seqid) AS seqid
+    FROM event.mediawikipingback
+    WHERE
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
+        (event.\`database\` LIKE 'mysql%' OR NOT (
+            event.MediaWiki LIKE '1.31.0%' OR
+            event.MediaWiki = '1.32.0-alpha'
+        ))
+    GROUP BY wiki
+) AS latest
+ON (alltime.seqid = latest.seqid)
+WHERE
+    event.arch IS NOT NULL
+;
+" 2> /dev/null | grep -v parquet.hadoop
