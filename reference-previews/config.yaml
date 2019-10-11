@@ -1,0 +1,46 @@
+graphite:
+    host: graphite.eqiad.wmnet
+    port: 2003
+
+reports:
+  baseline:
+    type: script
+    funnel: true
+    granularity: days
+    lag: 10800 # Wait three hours for data to land.
+    starts: 2019-10-10
+    graphite:
+        path: "{_metric}.{wiki}"
+        metrics:
+            reference_previews.baseline.pageviews: pageviews
+            reference_previews.baseline.footnote_clicks_per_pageview: footnote_clicks_per_pageview
+            reference_previews.baseline.content_clicks_per_pageview: content_clicks_per_pageview
+
+  cite:
+    type: script
+    funnel: true
+    granularity: days
+    lag: 10800 # Wait three hours for data to land.
+    starts: 2019-11-01
+    graphite:
+        path: "{_metric}.{wiki}"
+        metrics:
+            reference_previews.cite.pageviews: pageviews
+            reference_previews.cite.footnote_clicks_per_pageview: footnote_clicks_per_pageview
+            reference_previews.cite.content_clicks_from_reference_section_per_pageview: content_clicks_from_reference_section_per_pageview
+
+  popups:
+    type: script
+    funnel: true
+    granularity: days
+    lag: 10800 # Wait three hours for data to land.
+    starts: 2019-11-01 # TBD: anticipated deployment
+    graphite:
+        path: "{_metric}.{wiki}"
+        metrics:
+            reference_previews.popups.pageviews: pageviews
+            reference_previews.popups.popups_opened_per_pageview: popups_opened_per_pageview
+            reference_previews.popups.nav_to_reference_section_per_pageview: nav_to_reference_section_per_pageview
+            reference_previews.popups.content_clicks_from_popup_per_pageview: content_clicks_from_popup_per_pageview
+            reference_previews.popups.reference_popup_has_scrollbars_proportion: reference_popup_has_scrollbars_proportion
+            reference_previews.popups.reference_popup_is_scrolled_proportion: reference_popup_is_scrolled_proportion
