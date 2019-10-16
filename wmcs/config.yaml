@@ -1,5 +1,5 @@
 reports:
-  wmcs_edits:
+  wmcs_edits_monthly_by_wiki:
     lag: 86400 # 1 day in seconds
     granularity: months
     starts: 2019-10-01
