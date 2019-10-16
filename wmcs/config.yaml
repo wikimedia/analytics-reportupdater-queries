@@ -1,0 +1,6 @@
+reports:
+  wmcs_edits:
+    lag: 86400 # 1 day in seconds
+    granularity: months
+    starts: 2019-10-01
+    type: script
