@@ -1,33 +1,36 @@
 #!/bin/bash
 hive -e "
-SET hive.mapred.mode = nonstrict;
-SELECT
-    '$1' AS date,
-    SUM(IF(event.ServerSoftware LIKE 'Apache%', 1, 0)) AS \`Apache\`,
-    SUM(IF(event.ServerSoftware LIKE 'Microsoft-IIS%', 1, 0)) AS \`Microsoft-IIS\`,
-    SUM(IF(event.ServerSoftware LIKE 'nginx%', 1, 0)) AS \`nginx\`,
-    SUM(IF(event.ServerSoftware LIKE 'lighttpd%', 1, 0)) AS \`lighttpd\`,
-    SUM(IF(event.ServerSoftware LIKE 'LiteSpeed%', 1, 0)) AS \`LiteSpeed\`,
-    SUM(IF(event.ServerSoftware NOT LIKE 'Apache%' AND
-        event.ServerSoftware NOT LIKE 'Microsoft-IIS%' AND
-        event.ServerSoftware NOT LIKE 'nginx%' AND
-        event.ServerSoftware NOT LIKE 'lighttpd%' AND
-        event.ServerSoftware NOT LIKE 'LiteSpeed%', 1, 0)) AS \`Other\`
-FROM event.mediawikipingback AS alltime
-JOIN (
+WITH numbered AS (
     SELECT
-        MAX(seqid) AS seqid
-    FROM event.mediawikipingback
+        event.serverSoftware AS event_serversoftware,
+        ROW_NUMBER() OVER (
+            PARTITION BY wiki
+            ORDER BY dt DESC
+        ) AS row_num
+    FROM
+        event_sanitized.mediawikipingback
     WHERE
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0'), 'T', LPAD(hour, 2, '0'))  >= '2017-03-29T17' AND
         CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
         (event.\`database\` LIKE 'mysql%' OR NOT (
             event.MediaWiki LIKE '1.31.0%' OR
             event.MediaWiki = '1.32.0-alpha'
-        ))
-    GROUP BY wiki
-) AS latest
-ON (alltime.seqid = latest.seqid)
-WHERE
-    event.serverSoftware != ''
+        )) AND
+        event.serverSoftware != ''
+)
+SELECT
+    '$1' AS date,
+    SUM(IF(event_serversoftware LIKE 'Apache%', 1, 0)) AS \`Apache\`,
+    SUM(IF(event_serversoftware LIKE 'Microsoft-IIS%', 1, 0)) AS \`Microsoft-IIS\`,
+    SUM(IF(event_serversoftware LIKE 'nginx%', 1, 0)) AS \`nginx\`,
+    SUM(IF(event_serversoftware LIKE 'lighttpd%', 1, 0)) AS \`lighttpd\`,
+    SUM(IF(event_serversoftware LIKE 'LiteSpeed%', 1, 0)) AS \`LiteSpeed\`,
+    SUM(IF(event_serversoftware NOT LIKE 'Apache%' AND
+        event_serversoftware NOT LIKE 'Microsoft-IIS%' AND
+        event_serversoftware NOT LIKE 'nginx%' AND
+        event_serversoftware NOT LIKE 'lighttpd%' AND
+        event_serversoftware NOT LIKE 'LiteSpeed%', 1, 0)) AS \`Other\`
+FROM numbered
+WHERE row_num = 1
 ;
 " 2> /dev/null | grep -v parquet.hadoop

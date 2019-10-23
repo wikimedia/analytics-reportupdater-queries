@@ -1,33 +1,36 @@
 #!/bin/bash
 hive -e "
-SET hive.mapred.mode = nonstrict;
-SELECT
-    '$1' AS date,
-    SUM(IF(event.MediaWiki LIKE '1.28%', 1, 0)) AS \`1.28\`,
-    SUM(IF(event.MediaWiki LIKE '1.29%', 1, 0)) AS \`1.29\`,
-    SUM(IF(event.MediaWiki LIKE '1.30%', 1, 0)) AS \`1.30\`,
-    SUM(IF(event.MediaWiki LIKE '1.31%', 1, 0)) AS \`1.31\`,
-    SUM(IF(event.MediaWiki LIKE '1.32%', 1, 0)) AS \`1.32\`,
-    SUM(IF(event.MediaWiki NOT LIKE '1.28%' AND
-        event.MediaWiki NOT LIKE '1.29%' AND
-        event.MediaWiki NOT LIKE '1.30%' AND
-        event.MediaWiki NOT LIKE '1.31%' AND
-        event.MediaWiki NOT LIKE '1.32%', 1, 0)) AS \`Other\`
-FROM event.mediawikipingback AS alltime
-JOIN (
+WITH numbered AS (
     SELECT
-        MAX(seqid) AS seqid
-    FROM event.mediawikipingback
+        event.MediaWiki AS event_mediawiki,
+        ROW_NUMBER() OVER (
+            PARTITION BY wiki
+            ORDER BY dt DESC
+        ) AS row_num
+    FROM
+        event_sanitized.mediawikipingback
     WHERE
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0'), 'T', LPAD(hour, 2, '0'))  >= '2017-03-29T17' AND
         CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
         (event.\`database\` LIKE 'mysql%' OR NOT (
             event.MediaWiki LIKE '1.31.0%' OR
             event.MediaWiki = '1.32.0-alpha'
-        ))
-    GROUP BY wiki
-) AS latest
-ON (alltime.seqid = latest.seqid)
-WHERE
-    event.MediaWiki != ''
+        )) AND
+        event.MediaWiki != ''
+)
+SELECT
+    '$1' AS date,
+    SUM(IF(event_mediawiki LIKE '1.28%', 1, 0)) AS \`1.28\`,
+    SUM(IF(event_mediawiki LIKE '1.29%', 1, 0)) AS \`1.29\`,
+    SUM(IF(event_mediawiki LIKE '1.30%', 1, 0)) AS \`1.30\`,
+    SUM(IF(event_mediawiki LIKE '1.31%', 1, 0)) AS \`1.31\`,
+    SUM(IF(event_mediawiki LIKE '1.32%', 1, 0)) AS \`1.32\`,
+    SUM(IF(event_mediawiki NOT LIKE '1.28%' AND
+        event_mediawiki NOT LIKE '1.29%' AND
+        event_mediawiki NOT LIKE '1.30%' AND
+        event_mediawiki NOT LIKE '1.31%' AND
+        event_mediawiki NOT LIKE '1.32%', 1, 0)) AS \`Other\`
+FROM numbered
+WHERE row_num = 1
 ;
 " 2> /dev/null | grep -v parquet.hadoop

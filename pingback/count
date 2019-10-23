@@ -1,22 +1,25 @@
 #!/bin/bash
 hive -e "
-SET hive.mapred.mode = nonstrict;
-SELECT
-    '$1' AS date,
-    COUNT(*) AS \`Unique Wiki Count\`
-FROM event.mediawikipingback AS alltime
-JOIN (
+WITH numbered AS (
     SELECT
-        MAX(seqid) AS seqid
-    FROM event.mediawikipingback
+        ROW_NUMBER() OVER (
+            PARTITION BY wiki
+            ORDER BY dt DESC
+        ) AS row_num
+    FROM
+        event_sanitized.mediawikipingback
     WHERE
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0'), 'T', LPAD(hour, 2, '0'))  >= '2017-03-29T17' AND
         CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
         (event.\`database\` LIKE 'mysql%' OR NOT (
             event.MediaWiki LIKE '1.31.0%' OR
             event.MediaWiki = '1.32.0-alpha'
         ))
-    GROUP BY wiki
-) AS latest
-ON (alltime.seqid = latest.seqid)
+)
+SELECT
+    '$1' AS date,
+    COUNT(*) AS \`Unique Wiki Count\`
+FROM numbered
+WHERE row_num = 1
 ;
 " 2> /dev/null | grep -v parquet.hadoop

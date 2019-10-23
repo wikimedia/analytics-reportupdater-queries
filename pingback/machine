@@ -1,37 +1,40 @@
 #!/bin/bash
 hive -e "
-SET hive.mapred.mode = nonstrict;
-SELECT
-    '$1' AS date,
-    SUM(IF(event.machine = 'x86_64', 1, 0)) AS \`x86_64\`,
-    SUM(IF(event.machine = 'i386', 1, 0)) AS \`i386\`,
-    SUM(IF(event.machine = 'i586', 1, 0)) AS \`i586\`,
-    SUM(IF(event.machine = 'i686', 1, 0)) AS \`i686\`,
-    SUM(IF(event.machine = 'amd64' OR event.machine ='AMD64', 1, 0)) AS \`AMD64\`,
-    SUM(IF(event.machine LIKE 'arm%', 1, 0)) AS \`ARM\`,
-    SUM(IF(event.machine LIKE 'ppc%', 1, 0)) AS \`PPC\`,
-    SUM(IF(event.machine != 'x86_64' AND
-        event.machine != 'i386' AND
-        event.machine != 'i586' AND
-        event.machine != 'i686' AND
-        event.machine != 'amd64' AND event.machine !='AMD64' AND
-        event.machine NOT LIKE 'arm%' AND
-        event.machine NOT LIKE 'ppc%', 1, 0)) AS \`Other\`
-FROM event.mediawikipingback AS alltime
-JOIN (
+WITH numbered AS (
     SELECT
-        MAX(seqid) AS seqid
-    FROM event.mediawikipingback
+        event.machine AS event_machine,
+        ROW_NUMBER() OVER (
+            PARTITION BY wiki
+            ORDER BY dt DESC
+        ) AS row_num
+    FROM
+        event_sanitized.mediawikipingback
     WHERE
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0'), 'T', LPAD(hour, 2, '0'))  >= '2017-03-29T17' AND
         CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
         (event.\`database\` LIKE 'mysql%' OR NOT (
             event.MediaWiki LIKE '1.31.0%' OR
             event.MediaWiki = '1.32.0-alpha'
-        ))
-    GROUP BY wiki
-) AS latest
-ON (alltime.seqid = latest.seqid)
-WHERE
-    event.machine != ''
+        )) AND
+        event.machine != ''
+)
+SELECT
+    '$1' AS date,
+    SUM(IF(event_machine = 'x86_64', 1, 0)) AS \`x86_64\`,
+    SUM(IF(event_machine = 'i386', 1, 0)) AS \`i386\`,
+    SUM(IF(event_machine = 'i586', 1, 0)) AS \`i586\`,
+    SUM(IF(event_machine = 'i686', 1, 0)) AS \`i686\`,
+    SUM(IF(event_machine = 'amd64' OR event_machine ='AMD64', 1, 0)) AS \`AMD64\`,
+    SUM(IF(event_machine LIKE 'arm%', 1, 0)) AS \`ARM\`,
+    SUM(IF(event_machine LIKE 'ppc%', 1, 0)) AS \`PPC\`,
+    SUM(IF(event_machine != 'x86_64' AND
+        event_machine != 'i386' AND
+        event_machine != 'i586' AND
+        event_machine != 'i686' AND
+        event_machine != 'amd64' AND event_machine !='AMD64' AND
+        event_machine NOT LIKE 'arm%' AND
+        event_machine NOT LIKE 'ppc%', 1, 0)) AS \`Other\`
+FROM numbered
+WHERE row_num = 1
 ;
 " 2> /dev/null | grep -v parquet.hadoop

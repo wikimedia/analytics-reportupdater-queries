@@ -1,6 +1,44 @@
 #!/bin/bash
 hive -e "
-SET hive.mapred.mode = nonstrict;
+WITH numbered AS (
+    SELECT
+        CASE
+            WHEN event.memoryLimit LIKE '%M' THEN
+                CASE
+                    WHEN SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) RLIKE '^[0-9]+\$' THEN
+                        CAST(SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) AS BIGINT)
+                    WHEN SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) RLIKE '^[0-9]+([.][0-9]+)*\$' THEN
+                        CAST(SUBSTR(event.memoryLimit, 0, LOCATE('.', event.memoryLimit) - 1) AS BIGINT)
+                    ELSE -1
+                END
+            WHEN event.memoryLimit LIKE '%G' THEN
+                CASE
+                    WHEN SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) RLIKE '^[0-9]+\$' THEN
+                        CAST(SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) AS BIGINT) / 1024
+                    WHEN SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) RLIKE '^[0-9]+([.][0-9]+)*\$' THEN
+                        CAST(SUBSTR(event.memoryLimit, 0, LOCATE('.', event.memoryLimit) - 1) AS BIGINT) / 1024
+                    ELSE -1
+                END
+            WHEN event.memoryLimit RLIKE '^[0-9]+\$' THEN
+                CAST(event.memoryLimit AS BIGINT) / (1024 * 1024)
+            WHEN event.memoryLimit RLIKE '^[0-9]+([.][0-9]+)*\$' THEN
+                CAST(SUBSTR(event.memoryLimit, 0, LOCATE('.', event.memoryLimit) - 1) AS BIGINT) / (1024 * 1024)
+            ELSE -1
+        END AS normalizedMemoryLimit,
+        ROW_NUMBER() OVER (
+            PARTITION BY wiki
+            ORDER BY dt DESC
+        ) AS row_num
+    FROM event_sanitized.mediawikipingback
+    WHERE
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0'), 'T', LPAD(hour, 2, '0'))  >= '2017-03-29T17' AND
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
+        (event.\`database\` LIKE 'mysql%' OR NOT (
+            event.MediaWiki LIKE '1.31.0%' OR
+            event.MediaWiki = '1.32.0-alpha'
+        )) AND
+        event.memoryLimit != ''
+)
 SELECT
     '$1' AS date,
     SUM(IF(normalizedMemoryLimit > 0 AND normalizedMemoryLimit <= 1, 1, 0)) AS \`limit <= 1M\`,
@@ -12,48 +50,7 @@ SELECT
     SUM(IF(normalizedMemoryLimit > 512 AND normalizedMemoryLimit <= 1024, 1, 0)) AS \`512M < limit <= 1G\`,
     SUM(IF(normalizedMemoryLimit > 1024, 1, 0)) AS \`limit > 1G\`,
     SUM(IF(normalizedMemoryLimit < 0, 1, 0)) AS \`Non-numeric\`
-FROM
-    ( SELECT
-            seqid AS seqid,
-            CONCAT(year, '-', LPAD(month, 2, '0'), '-', lPAD(day, 2, '0')) AS timestamp,
-            CASE
-                WHEN event.memoryLimit LIKE '%M' THEN
-                    CASE
-                        WHEN SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) RLIKE '^[0-9]+\$' THEN
-                            CAST(SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) AS BIGINT)
-                        WHEN SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) RLIKE '^[0-9]+([.][0-9]+)*\$' THEN
-                            CAST(SUBSTR(event.memoryLimit, 0, LOCATE('.', event.memoryLimit) - 1) AS BIGINT)
-                        ELSE -1
-                    END
-                WHEN event.memoryLimit LIKE '%G' THEN
-                    CASE
-                        WHEN SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) RLIKE '^[0-9]+\$' THEN
-                            CAST(SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) AS BIGINT) / 1024
-                        WHEN SUBSTR(event.memoryLimit, 0, LENGTH(event.memoryLimit) - 1) RLIKE '^[0-9]+([.][0-9]+)*\$' THEN
-                            CAST(SUBSTR(event.memoryLimit, 0, LOCATE('.', event.memoryLimit) - 1) AS BIGINT) / 1024
-                        ELSE -1
-                    END
-                WHEN event.memoryLimit RLIKE '^[0-9]+\$' THEN
-                    CAST(event.memoryLimit AS BIGINT) / (1024 * 1024)
-                WHEN event.memoryLimit RLIKE '^[0-9]+([.][0-9]+)*\$' THEN
-                    CAST(SUBSTR(event.memoryLimit, 0, LOCATE('.', event.memoryLimit) - 1) AS BIGINT) / (1024 * 1024)
-                ELSE -1
-            END AS normalizedMemoryLimit
-        FROM event.mediawikipingback
-        WHERE event.memoryLimit != ''
-    ) AS result
-JOIN (
-    SELECT
-        MAX(seqid) AS seqid
-    FROM event.mediawikipingback
-    WHERE
-        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
-        (event.\`database\` LIKE 'mysql%' OR NOT (
-            event.MediaWiki LIKE '1.31.0%' OR
-            event.MediaWiki = '1.32.0-alpha'
-        ))
-    GROUP BY wiki
-) AS latest
-ON (result.seqid = latest.seqid)
+FROM numbered
+WHERE row_num = 1
 ;
 " 2> /dev/null | grep -v parquet.hadoop
