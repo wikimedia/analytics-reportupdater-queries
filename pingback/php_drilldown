@@ -3,6 +3,7 @@ hive -e "
 WITH numbered AS (
     SELECT
         event.PHP AS event_php,
+        event.MediaWiki AS event_mediawiki,
         ROW_NUMBER() OVER (
             PARTITION BY wiki
             ORDER BY dt DESC
@@ -16,8 +17,7 @@ WITH numbered AS (
             event.MediaWiki LIKE '1.31.0%' OR
             event.MediaWiki = '1.32.0-alpha'
         )) AND
-        event.PHP != '' AND
-        event.MediaWiki LIKE '$3%'
+        event.PHP != ''
 )
 SELECT
     '$1' AS date,
@@ -32,6 +32,8 @@ SELECT
         event_php NOT LIKE '7.1%' AND
         event_php NOT LIKE '7.2%', 1, 0)) AS \`Other\`
 FROM numbered
-WHERE row_num = 1
+WHERE
+    row_num = 1 AND
+    event_mediawiki LIKE '$3%'
 ;
 " 2> /dev/null | grep -v parquet.hadoop
