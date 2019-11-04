@@ -27,13 +27,17 @@ SELECT
     SUM(IF(event_mediawiki LIKE '1.32%', 1, 0)) AS \`1.32\`,
     SUM(IF(event_mediawiki LIKE '1.33%', 1, 0)) AS \`1.33\`,
     SUM(IF(event_mediawiki LIKE '1.34%', 1, 0)) AS \`1.34\`,
+    SUM(IF(event_mediawiki LIKE '1.35%', 1, 0)) AS \`1.35\`,
+    SUM(IF(event_mediawiki LIKE '1.36%', 1, 0)) AS \`1.36\`,
     SUM(IF(event_mediawiki NOT LIKE '1.28%' AND
         event_mediawiki NOT LIKE '1.29%' AND
         event_mediawiki NOT LIKE '1.30%' AND
         event_mediawiki NOT LIKE '1.31%' AND
         event_mediawiki NOT LIKE '1.32%' AND
         event_mediawiki NOT LIKE '1.33%' AND
-        event_mediawiki NOT LIKE '1.34%', 1, 0)) AS \`Other\`
+        event_mediawiki NOT LIKE '1.34%' AND
+        event_mediawiki NOT LIKE '1.35%' AND
+        event_mediawiki NOT LIKE '1.36%', 1, 0)) AS \`Other\`
 FROM numbered
 WHERE row_num = 1
 ;
