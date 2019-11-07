@@ -28,8 +28,7 @@ event_counts as (
         wiki
     from event.referencepreviewsbaseline
     where
-        event.referencePreviewsEnabled = false
-        and useragent.is_bot = false
+        useragent.is_bot = false
         and year = cast(split('$1', '-')[0] as int)
         and month = cast(split('$1', '-')[1] as int)
         and day = cast(split('$1', '-')[2] as int)

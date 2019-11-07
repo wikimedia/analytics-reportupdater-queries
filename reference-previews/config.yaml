@@ -8,7 +8,7 @@ reports:
     funnel: true
     granularity: days
     lag: 10800 # Wait three hours for data to land.
-    starts: 2019-10-10
+    starts: 2019-11-02
     graphite:
         path: "{_metric}.{wiki}"
         metrics:
