@@ -1,5 +1,18 @@
 reports:
-  wmcs_edits_monthly_by_wiki:
+
+  wikis_by_wmcs_edits:
+    lag: 86400 # 1 day in seconds
+    granularity: months
+    starts: 2019-10-01
+    type: script
+
+  wikis_by_wmcs_edits_percent:
+    lag: 86400 # 1 day in seconds
+    granularity: months
+    starts: 2019-10-01
+    type: script
+
+  wikis_by_internet_and_wmcs_edits:
     lag: 86400 # 1 day in seconds
     granularity: months
     starts: 2019-10-01
