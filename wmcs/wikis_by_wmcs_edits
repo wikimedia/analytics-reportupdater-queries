@@ -30,7 +30,7 @@ hive -e "
                 SUM(wmcs_edits) AS wmcs_edits
             FROM all
             WHERE
-                wiki_db NOT IN ${wikis}
+                wiki_db NOT IN \${wikis}
         ),
         selected AS (
             SELECT
@@ -38,7 +38,7 @@ hive -e "
                 wmcs_edits
             FROM all
             WHERE
-                wiki_db IN ${wikis}
+                wiki_db IN \${wikis}
         ),
         combined AS (
             SELECT * FROM other
