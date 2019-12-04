@@ -5,6 +5,7 @@ reports:
     granularity: months
     starts: 2019-10-01
     type: script
+    funnel: true
 
   wikis_by_wmcs_edits_percent:
     lag: 86400 # 1 day in seconds
@@ -17,3 +18,4 @@ reports:
     granularity: months
     starts: 2019-10-01
     type: script
+    funnel: true
