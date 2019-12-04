@@ -1,45 +1,39 @@
 #!/bin/bash
 hive -e "
     SET hive.mapred.mode = nonstrict;
-    SET hivevar:wikis=(
-            'arwiki',
-            'cawiki',
-            'commonswiki',
-            'cywiki',
-            'dewiki',
-            'enwiki',
-            'eswiki',
-            'fawiki',
-            'wikidatawiki'
-        );
+    SET hivevar:wikis = (
+        'arwiki',
+        'cawiki',
+        'commonswiki',
+        'cywiki',
+        'dewiki',
+        'enwiki',
+        'eswiki',
+        'fawiki',
+        'wikidatawiki'
+    );
 
     WITH
         all AS (
             SELECT
-                '$1' AS date,
                 wiki_db,
                 SUM(IF(network_origin='wikimedia_labs', edit_count, 0)) AS wmcs_edits
             FROM wmf.editors_daily
             WHERE
-                MONTH = substr('$1', 1, 7)
+                month = substr('$1', 1, 7)
             GROUP BY
                 wiki_db
-            ORDER BY
-                wiki_db
-            LIMIT 10000
         ),
         other AS (
             SELECT
-                '$1' AS date,
                 'OTHERWIKIS' AS wiki_db,
                 SUM(wmcs_edits) AS wmcs_edits
             FROM all
             WHERE
-            wiki_db NOT IN ${wikis}
+                wiki_db NOT IN ${wikis}
         ),
         selected AS (
             SELECT
-                '$1' AS date,
                 wiki_db,
                 wmcs_edits
             FROM all
@@ -61,12 +55,8 @@ hive -e "
         wiki_db,
         ROUND(wmcs_edits / wmcs_edits_total, 3) AS wmcs_percent
     FROM combined JOIN total
-    GROUP BY
-        wiki_db,
-        wmcs_edits_total
     ORDER BY
-        wiki_db,
-        wmcs_percent
+        wiki_db
     LIMIT 10000
     ;
 " 2> /dev/null | grep -v parquet.hadoop
