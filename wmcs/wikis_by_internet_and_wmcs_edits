@@ -12,7 +12,7 @@ hive -e "
     GROUP BY
         wiki_db
     ORDER BY
-        wiki_db
+        wmcs_percent DESC
     LIMIT 10000
     ;
 " 2> /dev/null | grep -v parquet.hadoop
