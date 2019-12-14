@@ -16,7 +16,7 @@ hive -e "
         total AS (
             SELECT
                 '$1' AS date,
-                'ALLWIKIS' AS wiki_db,
+                'TOTAL' AS wiki_db,
                 ROUND(SUM(wmcs_edits) / SUM(total_edits), 3) AS wmcs_percent
             FROM slice
         )
@@ -27,18 +27,6 @@ hive -e "
         wiki_db,
         wmcs_percent
     FROM slice
-    WHERE
-        wiki_db IN (
-            'arwiki',
-            'cawiki',
-            'commonswiki',
-            'cywiki',
-            'dewiki',
-            'enwiki',
-            'eswiki',
-            'fawiki',
-            'wikidatawiki'
-        )
     ORDER BY
         wiki_db
     LIMIT 10000

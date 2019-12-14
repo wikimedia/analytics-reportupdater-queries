@@ -1,60 +1,14 @@
 #!/bin/bash
 hive -e "
-    SET hive.mapred.mode = nonstrict;
-    SET hivevar:wikis = (
-        'arwiki',
-        'cawiki',
-        'commonswiki',
-        'cywiki',
-        'dewiki',
-        'enwiki',
-        'eswiki',
-        'fawiki',
-        'wikidatawiki'
-    );
-
-    WITH
-        all AS (
-            SELECT
-                wiki_db,
-                SUM(IF(network_origin='wikimedia_labs', edit_count, 0)) AS wmcs_edits
-            FROM wmf.editors_daily
-            WHERE
-                month = substr('$1', 1, 7)
-            GROUP BY
-                wiki_db
-        ),
-        other AS (
-            SELECT
-                'OTHERWIKIS' AS wiki_db,
-                SUM(wmcs_edits) AS wmcs_edits
-            FROM all
-            WHERE
-                wiki_db NOT IN \${wikis}
-        ),
-        selected AS (
-            SELECT
-                wiki_db,
-                wmcs_edits
-            FROM all
-            WHERE
-                wiki_db IN \${wikis}
-        ),
-        combined AS (
-            SELECT * FROM other
-            UNION ALL
-            SELECT * FROM selected
-        ),
-        total AS (
-            SELECT SUM(wmcs_edits) as wmcs_edits_total
-            FROM combined
-        )
-
     SELECT
         '$1' AS date,
         wiki_db,
-        ROUND(wmcs_edits / wmcs_edits_total, 3) AS wmcs_percent
-    FROM combined JOIN total
+        SUM(IF(network_origin='wikimedia_labs', edit_count, 0)) AS wmcs_edits
+    FROM wmf.editors_daily
+    WHERE
+        month = substr('$1', 1, 7)
+    GROUP BY
+        wiki_db
     ORDER BY
         wiki_db
     LIMIT 10000
