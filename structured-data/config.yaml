@@ -1,0 +1,21 @@
+# For context see the task and specifically this summary from @matthiasmullie:
+#   https://phabricator.wikimedia.org/T239565#5728117
+# See more about Structured data here:
+#   https://commons.wikimedia.org/wiki/Commons:Structured_data/Features_glossary/en
+# See more about wbc_entity_usage and the codes used here:
+#   https://doc.wikimedia.org/Wikibase/master/php/topic_usagetracking.html
+#   https://www.mediawiki.org/wiki/Wikibase/Schema/wbc_entity_usage
+
+reports:
+
+    commonswiki_wbc_entity_usage:
+        type: script
+        granularity: months
+        starts: 2019-11-01
+        lag: 432000 # wait 5 days to compute to make sure sqoop finished
+
+    commonswiki_mediainfo_slots:
+        type: script
+        granularity: months
+        starts: 2019-11-01
+        lag: 432000 # wait 5 days to compute to make sure sqoop finished
