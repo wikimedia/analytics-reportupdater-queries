@@ -1,5 +1,5 @@
 #!/bin/bash
-# Lua can be used to enrich file pages with structured data (Wikidata or mediainfo)
+# Lua can be used to enrich file pages with MediaInfo structured data
 # This report counts how many pages are enriched this way, excluding sitelinks
 # NOTE: As of 2019-12, the majority of the usage counted here points to Wikidata
 
@@ -16,9 +16,10 @@ hive -e "
         -- only include file pages and non-sitelink usage
   WHERE page_namespace = 6
     AND eu_aspect != 'S'
-    AND wmf_raw.mediawiki_page.wiki_db = 'commonswiki'
-    AND wmf_raw.mediawiki_wbc_entity_usage.wiki_db = 'commonswiki'
-    AND wmf_raw.mediawiki_page.snapshot = '$MONTH'
-    AND wmf_raw.mediawiki_wbc_entity_usage.snapshot = '$MONTH'
+    AND eu_entity_id like 'M%'
+    AND mediawiki_page.wiki_db = 'commonswiki'
+    AND mediawiki_wbc_entity_usage.wiki_db = 'commonswiki'
+    AND mediawiki_page.snapshot = '$MONTH'
+    AND mediawiki_wbc_entity_usage.snapshot = '$MONTH'
 ;
 " 2> /dev/null | grep -v parquet.hadoop

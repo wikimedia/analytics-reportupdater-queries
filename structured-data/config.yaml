@@ -8,11 +8,7 @@
 
 reports:
 
-    commonswiki_wbc_entity_usage:
-        type: script
-        granularity: months
-        starts: 2019-11-01
-        lag: 432000 # wait 5 days to compute to make sure sqoop finished
+    # removed due to lack of metric definition: commonswiki_wbc_entity_usage
 
     commonswiki_mediainfo_slots:
         type: script
