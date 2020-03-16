@@ -28,5 +28,5 @@ hive -e "
     AND mediawiki_slots.snapshot = '$MONTH'
     AND mediawiki_content.snapshot = '$MONTH'
     AND mediawiki_slot_roles.snapshot = '$MONTH'
-;
+    AND NOT mediawiki_page.page_is_redirect;
 " 2> /dev/null | grep -v parquet.hadoop
