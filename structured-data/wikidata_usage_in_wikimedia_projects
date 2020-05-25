@@ -1,0 +1,59 @@
+#!/bin/bash
+# see https://phabricator.wikimedia.org/T247099
+# number of total 'content' pages across the wikimedia projects using Wikidata
+# excluding sitelinks
+
+MONTH=$(echo $1 | cut -c1-7)
+hive -e "
+
+
+set hive.mapred.mode=nonstrict;
+
+WITH
+
+    wiki_content_namespaces as (
+        select
+            dbname,
+            namespace
+        FROM
+            wmf_raw.mediawiki_project_namespace_map
+        WHERE
+            namespace_is_content = 1
+            AND snapshot = '${MONTH}'
+    ),
+
+    pages_using_wikidata as (
+        SELECT
+            COUNT(DISTINCT(CONCAT(wbc.eu_page_id, wbc.wiki_db))) AS num_pages_use_wikidata
+        FROM
+            wmf_raw.mediawiki_wbc_entity_usage wbc
+            INNER JOIN wmf_raw.mediawiki_page p
+                ON p.page_id = wbc.eu_page_id AND p.wiki_db = wbc.wiki_db AND p.snapshot = wbc.snapshot AND NOT p.page_is_redirect
+            INNER JOIN wiki_content_namespaces AS ns
+                ON (ns.dbname=p.wiki_db AND ns.namespace = p.page_namespace)
+        WHERE
+            wbc.snapshot = '${MONTH}' AND wbc.eu_aspect != 'S'
+    ),
+
+    total_number_of_pages as (
+        SELECT
+            COUNT(DISTINCT(CONCAT(page_id,wiki_db))) AS num_content_page
+        FROM
+            wmf_raw.mediawiki_page AS p
+            INNER JOIN wiki_content_namespaces AS ns
+            ON (ns.dbname=p.wiki_db AND ns.namespace = p.page_namespace)
+        WHERE
+            p.snapshot='${MONTH}' AND NOT p.page_is_redirect
+    )
+
+    SELECT
+        '$1' as date,
+        num_pages_use_wikidata,
+        num_content_page,
+        num_pages_use_wikidata/num_content_page as percentage
+    FROM
+        total_number_of_pages, pages_using_wikidata
+    ;
+
+" 2> /dev/null | grep -v parquet.hadoop
+
