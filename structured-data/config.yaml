@@ -21,3 +21,9 @@ reports:
         granularity: months
         starts: 2019-11-01
         lag: 432000 #wait 5 days to compute to make sure scoop finishes
+    
+    commons_file_usage_in_wikimedia_projects:
+        type: script
+        granularity: months
+        starts: 2019-12-01
+        lag: 432000
