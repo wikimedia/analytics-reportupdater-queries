@@ -10,7 +10,7 @@ WITH numbered AS (
     FROM
         event_sanitized.mediawikipingback
     WHERE
-        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0'), 'T', LPAD(hour, 2, '0'))  >= '2017-03-29T17' AND
+        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= date_sub('$1', 23) AND
         CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2' AND
         (event.\`database\` LIKE 'mysql%' OR NOT (
             event.MediaWiki LIKE '1.31.0%' OR

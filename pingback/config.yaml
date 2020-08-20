@@ -2,47 +2,47 @@ reports:
   count:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
   database:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
   version:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
     funnel: true
   version_simple:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
   php:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
   php_drilldown:
     type: script
     granularity: weeks
-    starts: 2018-06-24
+    starts: 2019-10-06
     explode_by:
       MediaWiki_Version: 1.28, 1.29, 1.30, 1.31, 1.32, 1.33, 1.34, 1.35
   os:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
   arch:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
   machine:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
   serverSoftware:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
   memoryLimit:
     type: script
     granularity: weeks
-    starts: 2017-03-28
+    starts: 2019-10-06
