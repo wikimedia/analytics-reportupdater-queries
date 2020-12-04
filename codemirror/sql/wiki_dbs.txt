@@ -1,0 +1,4 @@
+enwiki
+dewiki
+trwiki
+fawiki

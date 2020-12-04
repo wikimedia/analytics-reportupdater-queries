@@ -1,0 +1,91 @@
+graphite:
+  host: graphite.eqiad.wmnet
+  port: 2003
+
+databases:
+  mediawiki:
+    auto_find_db_shard: true
+    wiki_db_placeholder: wiki_db
+    creds_file: /etc/mysql/conf.d/stats-research-client.cnf
+
+defaults:
+  db: mediawiki
+
+reports:
+  toggles:
+    granularity: days
+    starts: 2020-12-03
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/toggles
+    graphite:
+      path: "{_metric}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.CodeMirror.toggles.byEditor.wikitext_2010.byEnabled.true: toggled_on_from_wikitext
+        MediaWiki.CodeMirror.toggles.byEditor.wikitext_2010.byEnabled.false: toggled_off_from_wikitext
+        MediaWiki.CodeMirror.toggles.byEditor.wikitext_2017.byEnabled.true: toggled_on_from_wikitext_2017
+        MediaWiki.CodeMirror.toggles.byEditor.wikitext_2017.byEnabled.false: toggled_off_from_wikitext_2017
+
+  sessions:
+    granularity: days
+    starts: 2020-12-03
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/sessions
+    graphite:
+      path: "{_metric}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.CodeMirror.sessions.byEditor.wikitext_2010.byEnabled.true: enabled_in_wikitext_session
+        MediaWiki.CodeMirror.sessions.byEditor.wikitext_2010.byEnabled.false: disabled_in_wikitext_session
+        MediaWiki.CodeMirror.sessions.byEditor.wikitext_2017.byEnabled.true: enabled_in_wikitext_2017_session
+        MediaWiki.CodeMirror.sessions.byEditor.wikitext_2017.byEnabled.false: disabled_in_wikitext_2017_session
+
+  users_gadget_wiked:
+    granularity: days
+    starts: 2020-12-03
+    type: sql
+    execute: sql/users_gadget_wiked.sql
+    explode_by:
+      wiki_db: sql/wiki_dbs.txt
+    graphite:
+      path: "{_metric}.byWiki.{wiki_db}"
+      metrics:
+        MediaWiki.CodeMirror.preferences.byPreference.wikEd.byEnabled.true: users_gadget_wiked
+
+  users_extension_codeeditor:
+    granularity: days
+    starts: 2020-12-03
+    type: sql
+    execute: sql/users_extension_codeeditor.sql
+    explode_by:
+      wiki_db: sql/wiki_dbs.txt
+    graphite:
+      path: "{_metric}.byWiki.{wiki_db}"
+      metrics:
+        MediaWiki.CodeMirror.preferences.byPreference.CodeEditor.byEnabled.true: users_extensions_codeeditor
+
+  users_codemirror_and_wikitext:
+    granularity: days
+    starts: 2020-12-03
+    type: sql
+    execute: sql/users_codemirror_and_wikitext.sql
+    explode_by:
+      wiki_db: sql/wiki_dbs.txt
+    graphite:
+      path: "{_metric}.byWiki.{wiki_db}"
+      metrics:
+        Mediawiki.CodeMirror.preferences.byPreference.wikitext_2010_and_CodeMirror.byEnabled.true: users_codemirror_and_wikitext
+
+  users_codemirror_and_wikitext_2017:
+    granularity: days
+    starts: 2020-12-03
+    type: sql
+    execute: sql/users_codemirror_and_wikitext_2017.sql
+    explode_by:
+      wiki_db: sql/wiki_dbs.txt
+    graphite:
+      path: "{_metric}.byWiki.{wiki_db}"
+        metrics:
+          Mediawiki.CodeMirror.preferences.byPreference.wikitext_2017_and_CodeMirror.byEnabled.true: users_codemirror_and_newwikitext

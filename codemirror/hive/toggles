@@ -1,0 +1,19 @@
+#!/bin/bash
+hive -e "
+SELECT
+    '$1' as date,
+    wiki,
+    SUM(CASE WHEN event.editor = 'wikitext' AND event.enabled = true THEN 1 ELSE 0 END) AS toggled_on_from_wikitext,
+    SUM(CASE WHEN event.editor = 'wikitext' AND event.enabled = false THEN 1 ELSE 0 END) AS toggled_off_from_wikitext,
+    SUM(CASE WHEN event.editor = 'wikitext-2017' AND event.enabled = true THEN 1 ELSE 0 END) AS toggled_on_from_wikitext_2017,
+    SUM(CASE WHEN event.editor = 'wikitext-2017' AND event.enabled = false THEN 1 ELSE 0 END) AS toggled_off_from_wikitext_2017
+FROM
+    event.CodeMirrorUsage
+WHERE
+    event.toggled = true
+    AND year = cast(split('$1', '-')[0] as int)
+    AND month = cast(split('$1', '-')[1] as int)
+    AND day = cast(split('$1', '-')[2] as int)
+GROUP BY
+    wiki;
+" 2> /dev/null | grep -v parquet.hadoop
