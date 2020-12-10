@@ -1,0 +1,34 @@
+hive -e "
+WITH all_events AS (
+    SELECT
+        wiki,
+        event.action
+    FROM
+        event.VisualEditorFeatureUse
+    WHERE
+        event.feature = 'transclusion'
+        AND year = cast(split('$1', '-')[0] as int)
+        AND month = cast(split('$1', '-')[1] as int)
+        AND day = cast(split('$1', '-')[2] as int)
+)
+
+SELECT
+    '$1' AS date,
+    wiki,
+    SUM(
+        CASE
+            WHEN action = 'edit-parameter-value' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_edit_parameter,
+    SUM(
+        CASE
+            WHEN action = 'template-doc-link-click' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_doc_click
+FROM
+    all_events
+GROUP BY
+    wiki
+" 2> /dev/null | grep -v parquet.hadoop

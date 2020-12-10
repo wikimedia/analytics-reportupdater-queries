@@ -1,0 +1,71 @@
+hive -e "
+WITH edit_events AS (
+    SELECT
+        wiki,
+        event.editing_session_id AS session,
+        event.action
+    FROM
+        event.EditAttemptStep
+    WHERE
+        (
+            event.action = 'saveSuccess'
+            OR event.action = 'abort'
+        )
+        AND year = cast(split('$1', '-')[0] as int)
+        AND month = cast(split('$1', '-')[1] as int)
+        AND day = cast(split('$1', '-')[2] as int)
+),
+ve_events AS (
+    SELECT
+        wiki,
+        event.editingSessionId AS session,
+        event.action
+    FROM
+        event.VisualEditorFeatureUse
+    WHERE
+        (
+            event.action = 'add-known-parameter'
+            OR event.action = 'add-unknown-parameter'
+        )
+        AND event.feature = 'transclusion'
+        AND year = cast(split('$1', '-')[0] as int)
+        AND month = cast(split('$1', '-')[1] as int)
+        AND day = cast(split('$1', '-')[2] as int)
+)
+
+SELECT
+    '$1' AS date,
+    ve_events.wiki,
+    SUM(
+        CASE
+            WHEN edit_events.action = 'saveSuccess' AND ve_events.action = 'add-known-parameter' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_add_known_param_success,
+    SUM(
+        CASE
+            WHEN edit_events.action = 'saveSuccess' AND ve_events.action = 'add-unknown-parameter' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_add_unknown_param_success,
+    SUM(
+        CASE
+            WHEN edit_events.action = 'abort' AND ve_events.action = 'add-known-parameter' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_add_known_param_abort,
+    SUM(
+        CASE
+            WHEN edit_events.action = 'abort' AND ve_events.action = 'add-unknown-parameter' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_add_unknown_param_abort
+FROM
+    edit_events,
+    ve_events
+WHERE
+    edit_events.session = ve_events.session
+    AND edit_events.wiki = ve_events.wiki
+GROUP BY
+    ve_events.wiki;
+" 2> /dev/null | grep -v parquet.hadoop

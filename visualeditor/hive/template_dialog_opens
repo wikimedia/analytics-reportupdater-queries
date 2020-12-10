@@ -1,0 +1,45 @@
+hive -e "
+SELECT
+    '$1' AS date,
+    wiki,
+    SUM(
+        CASE
+            WHEN event.action = 'window-open-from-tool' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_opens_from_menu,
+    SUM(
+        CASE
+            WHEN event.action = 'window-open-from-sequence' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_opens_from_keyboard,
+    SUM(
+        CASE
+            WHEN event.action = 'window-open-from-context'
+                  OR event.action = 'window-open-from-command' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_opens_from_existing,
+    SUM(
+        CASE
+            WHEN event.action = 'dialog-done' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_successes,
+    SUM(
+        CASE
+            WHEN event.action = 'dialog-abort' THEN 1
+            ELSE 0
+        END
+    ) AS template_dialog_aborts
+FROM
+    event.VisualEditorFeatureUse
+WHERE
+    event.feature = 'transclusion'
+    AND year = cast(split('$1', '-')[0] as int)
+    AND month = cast(split('$1', '-')[1] as int)
+    AND day = cast(split('$1', '-')[2] as int)
+GROUP BY
+    wiki;
+" 2> /dev/null | grep -v parquet.hadoop

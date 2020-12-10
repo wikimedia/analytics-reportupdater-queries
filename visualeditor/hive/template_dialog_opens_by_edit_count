@@ -1,0 +1,39 @@
+hive -e "
+WITH all_events AS (
+    SELECT
+        wiki,
+        event.user_editcount
+    FROM
+        event.VisualEditorFeatureUse
+    WHERE
+        event.feature = 'transclusion'
+        AND event.action LIKE 'window-open-%'
+        AND year = cast(split('$1', '-')[0] as int)
+        AND month = cast(split('$1', '-')[1] as int)
+        AND day = cast(split('$1', '-')[2] as int)
+),
+
+bucketed_events AS (
+    SELECT
+        wiki,
+        CASE WHEN user_editcount > 10000 THEN 'over10k'
+            WHEN user_editcount > 1000 THEN 'over1k'
+            WHEN user_editcount > 100 THEN 'over100'
+            WHEN user_editcount > 10 THEN 'over10'
+            ELSE 'under11'
+        END edit_count_bucket
+    FROM
+        all_events
+)
+
+SELECT
+    '$1' AS date,
+    wiki,
+    edit_count_bucket,
+    COUNT(*) as template_dialog_opens
+FROM
+    bucketed_events
+GROUP BY
+    wiki,
+    edit_count_bucket;
+" 2> /dev/null | grep -v parquet.hadoop

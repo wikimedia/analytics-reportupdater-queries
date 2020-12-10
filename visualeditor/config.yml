@@ -1,0 +1,60 @@
+graphite:
+  host: graphite.eqiad.wmnet
+  port: 2003
+
+reports:
+  template_dialog_opens_by_edit_count:
+    granularity: days
+    starts: 2020-12-10
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/template_dialog_opens_by_edit_count
+    graphite:
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.VisualEditor.templateDialog.open: template_dialog_opens
+
+  template_dialog_opens:
+    granularity: days
+    starts: 2020-12-10
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/template_dialog_opens
+    graphite:
+      path: "{_metric}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.VisualEditor.templateDialog.open.byMethod.menu: template_dialog_opens_from_menu
+        MediaWiki.VisualEditor.templateDialog.open.byMethod.keyboard: template_dialog_opens_from_keyboard
+        MediaWiki.VisualEditor.templateDialog.open.byMethod.edit_existing: template_dialog_opens_from_existing
+        MediaWiki.VisualEditor.templateDialog.close.bySaved.true: template_dialog_successes
+        MediaWiki.VisualEditor.templateDialog.close.bySaved.false: template_dialog_aborts
+
+  template_dialog_parameters_by_edit_success:
+    granularity: days
+    starts: 2020-12-10
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/template_dialog_parameters_by_edit_success
+    graphite:
+      path: "{_metric}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.VisualEditor.templateDialog.add_known_param.byEditSaved.true: template_dialog_add_known_param_success
+        MediaWiki.VisualEditor.templateDialog.add_known_param.byEditSaved.false: template_dialog_add_known_param_abort
+        MediaWiki.VisualEditor.templateDialog.add_unknown_param.byEditSaved.true: template_dialog_add_unknown_param_success
+        MediaWiki.VisualEditor.templateDialog.add_unknown_param.byEditSaved.false: template_dialog_add_unknown_param_abort
+
+  template_dialog_other_events:
+    granularity: days
+    starts: 2020-12-10
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/template_dialog_other_events
+    graphite:
+      path: "{_metric}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.VisualEditor.templateDialog.edit_parameter: template_dialog_edit_parameter
+        MediaWiki.VisualEditor.templateDialog.doc_click: template_dialog_doc_click
