@@ -2,7 +2,8 @@ hive -e "
 WITH all_events AS (
     SELECT
         wiki,
-        event.user_editcount
+        event.user_editcount,
+        event.user_id
     FROM
         event.VisualEditorFeatureUse
     WHERE
@@ -16,7 +17,8 @@ WITH all_events AS (
 bucketed_events AS (
     SELECT
         wiki,
-        CASE WHEN user_editcount > 10000 THEN 'over10k'
+        CASE WHEN user_id = 0 THEN 'anonymous'
+            WHEN user_editcount > 10000 THEN 'over10k'
             WHEN user_editcount > 1000 THEN 'over1k'
             WHEN user_editcount > 100 THEN 'over100'
             WHEN user_editcount > 10 THEN 'over10'
