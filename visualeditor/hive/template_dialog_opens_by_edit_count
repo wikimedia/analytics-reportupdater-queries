@@ -1,3 +1,4 @@
+#!/bin/bash
 hive -e "
 WITH all_events AS (
     SELECT
