@@ -1,3 +1,4 @@
+#!/bin/bash
 hive -e "
 WITH edit_events AS (
     SELECT

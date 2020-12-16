@@ -1,3 +1,4 @@
+#!/bin/bash
 hive -e "
 SELECT
     '$1' AS date,
