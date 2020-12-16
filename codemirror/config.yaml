@@ -46,7 +46,7 @@ reports:
     granularity: days
     starts: 2020-12-03
     type: sql
-    execute: sql/users_gadget_wiked.sql
+    execute: sql/users_gadget_wiked
     explode_by:
       wiki_db: sql/wiki_dbs.txt
     graphite:
@@ -58,7 +58,7 @@ reports:
     granularity: days
     starts: 2020-12-03
     type: sql
-    execute: sql/users_extension_codeeditor.sql
+    execute: sql/users_extension_codeeditor
     explode_by:
       wiki_db: sql/wiki_dbs.txt
     graphite:
@@ -70,7 +70,7 @@ reports:
     granularity: days
     starts: 2020-12-03
     type: sql
-    execute: sql/users_codemirror_and_wikitext.sql
+    execute: sql/users_codemirror_and_wikitext
     explode_by:
       wiki_db: sql/wiki_dbs.txt
     graphite:
@@ -82,10 +82,10 @@ reports:
     granularity: days
     starts: 2020-12-03
     type: sql
-    execute: sql/users_codemirror_and_wikitext_2017.sql
+    execute: sql/users_codemirror_and_wikitext_2017
     explode_by:
       wiki_db: sql/wiki_dbs.txt
     graphite:
       path: "{_metric}.byWiki.{wiki_db}"
-        metrics:
-          Mediawiki.CodeMirror.preferences.byPreference.wikitext_2017_and_CodeMirror.byEnabled.true: users_codemirror_and_newwikitext
+      metrics:
+        Mediawiki.CodeMirror.preferences.byPreference.wikitext_2017_and_CodeMirror.byEnabled.true: users_codemirror_and_newwikitext
