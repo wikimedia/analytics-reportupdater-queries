@@ -1,0 +1,31 @@
+graphite:
+  host: graphite.eqiad.wmnet
+  port: 2003
+
+reports:
+  dialog:
+    granularity: days
+    starts: 2020-12-14
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/dialog
+    graphite:
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.TemplateData.dialog.created_and_saved_template: create_and_save
+        MediaWiki.TemplateData.dialog.created_and_abandoned_template: create_and_abandon
+        MediaWiki.TemplateData.dialog.edited_and_saved_template: edit_and_save
+        MediaWiki.TemplateData.dialog.edited_and_abandoned_template: edit_and_abandon
+
+  actions:
+    granularity: days
+    starts: 2020-12-14
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/actions
+    graphite:
+      path: "MediaWiki.TemplateData.template.{action}.{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
+      metrics:
+        actionCount: count

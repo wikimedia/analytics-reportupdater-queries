@@ -1,0 +1,53 @@
+#!/bin/bash
+hive -e "
+WITH events AS (
+    SELECT
+        wiki,
+        event.user_id,
+        event.user_edit_count,
+        event.action
+    FROM
+        event.TemplateDataEditor
+    WHERE
+        event.action IN (
+            'parameter-type-change',
+            'parameter-priority-change',
+            'parameter-label-change',
+            'parameter-description-change',
+            'parameter-example-change',
+            'parameter-default-change',
+            'template-description-change',
+            'parameter-reorder'
+        )
+        AND year = cast(split('$1', '-')[0] as int)
+        AND month = cast(split('$1', '-')[1] as int)
+        AND day = cast(split('$1', '-')[2] as int)
+),
+bucketed_events AS (
+    SELECT
+        wiki,
+        action,
+        CASE WHEN user_id = 0 THEN 'anonymous'
+            WHEN user_edit_count > 10000 THEN 'over10k'
+            WHEN user_edit_count > 1000 THEN 'over1k'
+            WHEN user_edit_count > 100 THEN 'over100'
+            WHEN user_edit_count > 10 THEN 'over10'
+            ELSE 'under11'
+        END AS edit_count_bucket
+    FROM
+        events
+)
+
+SELECT
+    '$1' AS date,
+    wiki,
+    edit_count_bucket,
+    action,
+    COUNT(*) AS count
+FROM
+    bucketed_events
+GROUP BY
+    wiki,
+    edit_count_bucket,
+    action;
+" 2> /dev/null | grep -v parquet.hadoop
