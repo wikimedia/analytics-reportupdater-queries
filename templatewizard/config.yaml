@@ -5,7 +5,7 @@ graphite:
 reports:
   template_wizard_opens:
     granularity: days
-    starts: 2020-12-16
+    starts: 2021-01-13
     type: script
     lag: 18000
     funnel: true
@@ -17,7 +17,7 @@ reports:
 
   template_wizard_exits:
     granularity: days
-    starts: 2020-12-16
+    starts: 2021-01-13
     type: script
     lag: 18000
     funnel: true
