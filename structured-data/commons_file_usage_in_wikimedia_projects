@@ -1,7 +1,7 @@
 #!/bin/bash
-# see https://phabricator.wikimedia.org/T247099
-# number of total 'content' pages across the wikimedia projects using Wikidata
-# excluding sitelinks
+# see https://phabricator.wikimedia.org/T247417
+# number of total 'non-text' files being used on content pages of other wikimedia projects
+# by "other" wikimedia projects, we mean all wikis except for commons
 
 MONTH=$(echo $1 | cut -c1-7)
 hive -e "
@@ -13,11 +13,11 @@ set hive.mapred.mode=nonstrict;
 WITH
 
     wiki_content_namespaces as (
-        select
+        SELECT
             dbname,
             namespace
         FROM
-            wmf_raw.mediawiki_project_namespace_map
+            mediawiki_project_namespace_map
         WHERE
             namespace_is_content = 1
             AND snapshot = '${MONTH}'
@@ -25,33 +25,36 @@ WITH
 
     imagelinks_commons_files as (
         SELECT
-            COUNT(DISTINCT il_to) AS num_commons_files_used_content_pages
+            COUNT(DISTINCT il_to) AS num_uses_of_commons_files_on_content_pages
         FROM
-            wmf_raw.mediawiki_imagelinks as m
+            mediawiki_imagelinks as m
             INNER JOIN wiki_content_namespaces AS ns
-                ON ( ns.namespace = m.il_from_namespace)
+                ON (ns.namespace = m.il_from_namespace AND ns.dbname = m.wiki_db)
         WHERE
             m.snapshot = '${MONTH}'
+            AND m.wiki_db <> 'commonswiki'
     ),
 
     page_history_commons_files as (
         SELECT
-            COUNT(distinct page_id) AS num_files_on_commons
+            COUNT(DISTINCT page_id) AS num_commons_files
         FROM
             wmf.mediawiki_page_history
         WHERE
-            snapshot='${MONTH}' AND NOT page_is_redirect 
-            AND not page_is_deleted 
-            AND page_namespace =6 AND wiki_db='commonswiki'
+            snapshot='${MONTH}'
+            AND NOT page_is_redirect
+            AND NOT page_is_deleted
+            AND page_namespace = 6
+            AND wiki_db = 'commonswiki'
     )
 
     SELECT
         '$1' as date,
-        num_commons_files_used_content_pages,
-        num_files_on_commons,
-   	(num_commons_files_used_content_pages/num_files_on_commons) as percentage 
-   FROM
-        page_history_commons_files,imagelinks_commons_files
+        num_uses_of_commons_files_on_content_pages,
+        num_commons_files,
+        (num_uses_of_commons_files_on_content_pages/num_commons_files) as ratio
+    FROM
+        page_history_commons_files, imagelinks_commons_files
     ;
 
 
