@@ -20,7 +20,7 @@ reports:
     funnel: true
     execute: hive/toggles
     graphite:
-      path: "{_metric}.byWiki.{wiki}"
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
       metrics:
         MediaWiki.CodeMirror.toggles.byEditor.wikitext_2010.byEnabled.true: toggled_on_from_wikitext
         MediaWiki.CodeMirror.toggles.byEditor.wikitext_2010.byEnabled.false: toggled_off_from_wikitext
@@ -35,7 +35,7 @@ reports:
     funnel: true
     execute: hive/sessions
     graphite:
-      path: "{_metric}.byWiki.{wiki}"
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
       metrics:
         MediaWiki.CodeMirror.sessions.byEditor.wikitext_2010.byEnabled.true: enabled_in_wikitext_session
         MediaWiki.CodeMirror.sessions.byEditor.wikitext_2010.byEnabled.false: disabled_in_wikitext_session
@@ -50,7 +50,7 @@ reports:
     explode_by:
       wiki_db: sql/wiki_dbs.txt
     graphite:
-      path: "{_metric}.byWiki.{wiki_db}"
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki_db}"
       metrics:
         MediaWiki.CodeMirror.preferences.byPreference.wikitext_2010_and_CodeMirror.byEnabled.true: users_codemirror_and_wikitext
 

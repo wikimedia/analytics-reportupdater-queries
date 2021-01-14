@@ -9,6 +9,12 @@ with all_events as (
         event.enabled,
         event.session_token,
         event.edit_start_ts_ms,
+        case
+            when event.user_id = 0 then 'anonymous'
+            when event.user_edit_count_bucket is not null then event.user_edit_count_bucket
+            -- TODO: Remove this temporary fallback once migration is complete.
+            else 'unknown'
+        end as edit_count_bucket,
         seqid
     from
         event.CodeMirrorUsage
@@ -24,6 +30,7 @@ grouped_sessions as (
         wiki,
         editor,
         enabled,
+        edit_count_bucket,
         row_number()
             over (
                 partition by
@@ -31,7 +38,7 @@ grouped_sessions as (
                 order by
                     seqid desc
             )
-            as row
+            as rownum
     from
         all_events
 ),
@@ -41,17 +48,19 @@ latest_events as (
     select
         wiki,
         editor,
-        enabled
+        enabled,
+        edit_count_bucket
     from
         grouped_sessions
     where
-        row = 1
+        rownum = 1
 )
 
 -- Sum each possible combination of attributes.
 select
     '$1' as \`date\`,
     wiki,
+    edit_count_bucket,
     sum(case when editor = 'wikitext' and enabled = true then 1 else 0 end) as enabled_in_wikitext_session,
     sum(case when editor = 'wikitext' and enabled = false then 1 else 0 end) as disabled_in_wikitext_session,
     sum(case when editor = 'wikitext-2017' and enabled = true then 1 else 0 end) as enabled_in_wikitext_2017_session,
@@ -59,5 +68,6 @@ select
 from
     latest_events
 group by
-    wiki;
+    wiki,
+    edit_count_bucket;
 " 2> /dev/null | grep -v parquet.hadoop
