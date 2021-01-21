@@ -3,7 +3,9 @@ hive -e "
 WITH all_events AS (
     SELECT
         wiki,
-        event.action
+        event.action,
+        event.user_id,
+        event.user_editcount
     FROM
         event.VisualEditorFeatureUse
     WHERE
@@ -12,11 +14,27 @@ WITH all_events AS (
         AND year = cast(split('$1', '-')[0] as int)
         AND month = cast(split('$1', '-')[1] as int)
         AND day = cast(split('$1', '-')[2] as int)
+),
+
+bucketed_events AS (
+    SELECT
+        wiki,
+        action,
+        CASE WHEN user_id = 0 THEN 'anonymous'
+            WHEN user_editcount > 1000 THEN '1000+ edits'
+            WHEN user_editcount > 100 THEN '100-999 edits'
+            WHEN user_editcount > 4 THEN '5-99 edits'
+            WHEN user_editcount > 0 THEN '1-4 edits'
+            ELSE '0 edits'
+        END edit_count_bucket
+    FROM
+        all_events
 )
 
 SELECT
     '$1' AS \`date\`,
     wiki,
+    edit_count_bucket,
     -- Compensate for sampling by multiplying by 1 / 6.25% = 16
     SUM(
         CASE
@@ -31,7 +49,8 @@ SELECT
         END
     ) * 16 AS template_dialog_doc_click
 FROM
-    all_events
+    bucketed_events
 GROUP BY
-    wiki
+    wiki,
+    edit_count_bucket
 " 2> /dev/null | grep -v parquet.hadoop
