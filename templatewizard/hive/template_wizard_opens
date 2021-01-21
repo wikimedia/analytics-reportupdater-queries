@@ -4,8 +4,18 @@ hive -e "
 with all_events AS (
     select
         wiki,
-        event.performer.user_edit_count,
-        event.performer.user_id
+        case
+            when event.performer.user_id is null then 'anonymous'
+            -- TODO: after the user_edit_count_bucket producer is fully migrated, probably in
+            -- wmf/1.36.0-wmf.29, we can remove transitional logic and trust the bucket label.
+            when event.performer.user_edit_count_bucket is not null then event.performer.user_edit_count_bucket
+            when event.performer.user_edit_count >= 1000 then '1000+ edits'
+            when event.performer.user_edit_count >= 100 then '100-999 edits'
+            when event.performer.user_edit_count >= 5 then '5-99 edits'
+            when event.performer.user_edit_count >= 1 then '1-4 edits'
+            when event.performer.user_edit_count = 0 then '0 edits'
+            else 'unknown'
+        end as edit_count_bucket
     from
         event.TemplateWizard
     where
@@ -13,21 +23,6 @@ with all_events AS (
         and year = cast(split('$1', '-')[0] as int)
         and month = cast(split('$1', '-')[1] as int)
         and day = cast(split('$1', '-')[2] as int)
-        and event.performer.user_id is not null
-),
-
-bucketed_events as (
-    select
-        wiki,
-        case when user_id = 0 then 'anonymous'
-            when user_edit_count > 10000 then 'over10k'
-            when user_edit_count > 1000 then 'over1k'
-            when user_edit_count > 100 then 'over100'
-            when user_edit_count > 10 then 'over10'
-            else 'under11'
-        end edit_count_bucket
-    from
-        all_events
 )
 
 select
