@@ -3,6 +3,18 @@ graphite:
   port: 2003
 
 reports:
+  visual_editor_sessions:
+    granularity: days
+    starts: 2020-12-10
+    type: script
+    lag: 18000
+    funnel: true
+    execute: hive/visual_editor_sessions
+    graphite:
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.VisualEditor.session: visual_editor_sessions
+
   template_dialog_opens_by_edit_count:
     granularity: days
     starts: 2020-12-10
