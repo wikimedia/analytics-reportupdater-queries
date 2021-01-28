@@ -3,29 +3,25 @@ hive -e "
 WITH events AS (
     SELECT
         wiki,
-        event.user_id,
-        event.user_edit_count,
-        event.action
+        event.action,
+        CASE
+            WHEN event.user_id = 0 THEN 'anonymous'
+            -- TODO: after the user_edit_count_bucket producer is fully migrated, probably in
+            -- wmf/1.36.0-wmf.29, we can remove transitional logic and trust the bucket label.
+            WHEN event.user_edit_count_bucket IS NOT null THEN event.performer.user_edit_count_bucket
+            WHEN event.user_edit_count >= 1000 THEN '1000+ edits'
+            WHEN event.user_edit_count >= 100 THEN '100-999 edits'
+            WHEN event.user_edit_count >= 5 THEN '5-99 edits'
+            WHEN event.user_edit_count >= 1 THEN '1-4 edits'
+            WHEN event.user_edit_count = 0 THEN '0 edits'
+            ELSE 'unknown'
+        END AS edit_count_bucket
     FROM
         event.TemplateDataEditor
     WHERE
         year = cast(split('$1', '-')[0] as int)
         AND month = cast(split('$1', '-')[1] as int)
         AND day = cast(split('$1', '-')[2] as int)
-),
-bucketed_events AS (
-    SELECT
-        wiki,
-        action,
-        CASE WHEN user_id = 0 THEN 'anonymous'
-            WHEN user_edit_count > 10000 THEN 'over10k'
-            WHEN user_edit_count > 1000 THEN 'over1k'
-            WHEN user_edit_count > 100 THEN 'over100'
-            WHEN user_edit_count > 10 THEN 'over10'
-            ELSE 'under11'
-        END AS edit_count_bucket
-    FROM
-        events
 ),
 metrics AS (
     SELECT
@@ -56,7 +52,7 @@ metrics AS (
             END
         ) AS save_dialog_edit
     FROM
-        bucketed_events
+        events
     GROUP BY
         wiki,
         edit_count_bucket
