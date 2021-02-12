@@ -12,6 +12,7 @@ WITH edit_events AS (
             event.action = 'saveSuccess'
             OR event.action = 'abort'
         )
+        AND is_oversample = false
         AND year = cast(split('$1', '-')[0] as int)
         AND month = cast(split('$1', '-')[1] as int)
         AND day = cast(split('$1', '-')[2] as int)
@@ -37,30 +38,31 @@ ve_events AS (
 SELECT
     '$1' AS date,
     ve_events.wiki,
+    -- Compensate for sampling by multiplying by 1 / 6.25% = 16
     SUM(
         CASE
             WHEN edit_events.action = 'saveSuccess' AND ve_events.action = 'add-known-parameter' THEN 1
             ELSE 0
         END
-    ) AS template_dialog_add_known_param_success,
+    ) * 16 AS template_dialog_add_known_param_success,
     SUM(
         CASE
             WHEN edit_events.action = 'saveSuccess' AND ve_events.action = 'add-unknown-parameter' THEN 1
             ELSE 0
         END
-    ) AS template_dialog_add_unknown_param_success,
+    ) * 16 AS template_dialog_add_unknown_param_success,
     SUM(
         CASE
             WHEN edit_events.action = 'abort' AND ve_events.action = 'add-known-parameter' THEN 1
             ELSE 0
         END
-    ) AS template_dialog_add_known_param_abort,
+    ) * 16 AS template_dialog_add_known_param_abort,
     SUM(
         CASE
             WHEN edit_events.action = 'abort' AND ve_events.action = 'add-unknown-parameter' THEN 1
             ELSE 0
         END
-    ) AS template_dialog_add_unknown_param_abort
+    ) * 16 AS template_dialog_add_unknown_param_abort
 FROM
     edit_events,
     ve_events

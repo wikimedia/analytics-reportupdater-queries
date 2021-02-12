@@ -8,6 +8,7 @@ WITH all_events AS (
         event.VisualEditorFeatureUse
     WHERE
         event.feature = 'transclusion'
+        -- FIXME: How can we filter out oversampled events?
         AND year = cast(split('$1', '-')[0] as int)
         AND month = cast(split('$1', '-')[1] as int)
         AND day = cast(split('$1', '-')[2] as int)
@@ -16,18 +17,19 @@ WITH all_events AS (
 SELECT
     '$1' AS date,
     wiki,
+    -- Compensate for sampling by multiplying by 1 / 6.25% = 16
     SUM(
         CASE
             WHEN action = 'edit-parameter-value' THEN 1
             ELSE 0
         END
-    ) AS template_dialog_edit_parameter,
+    ) * 16 AS template_dialog_edit_parameter,
     SUM(
         CASE
             WHEN action = 'template-doc-link-click' THEN 1
             ELSE 0
         END
-    ) AS template_dialog_doc_click
+    ) * 16 AS template_dialog_doc_click
 FROM
     all_events
 GROUP BY
