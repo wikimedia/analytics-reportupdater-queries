@@ -19,7 +19,7 @@ WITH numbered AS (
         event.\`database\` != ''
 )
 SELECT
-    '$1' AS date,
+    '$1' AS report_date,
     SUM(IF(event_database LIKE 'mysql%', 1, 0)) AS \`mysql\`,
     SUM(IF(event_database = 'sqlite', 1, 0)) AS \`sqlite\`,
     SUM(IF(event_database = 'postgres', 1, 0)) AS \`postgres\`,

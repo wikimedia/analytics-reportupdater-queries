@@ -20,7 +20,7 @@ hive -e "
             FROM slice
         )
     SELECT
-        '$1' AS date,
+        '$1' AS report_date,
         os_family,
         os_major,
         browser_family,

@@ -19,7 +19,7 @@ WITH
         ORDER BY NULL
     )
     SELECT
-        DATE('{from_timestamp}') AS DATE,
+        DATE('{from_timestamp}') AS report_date,
         SUM(wiked_enabled) AS users_gadget_wiked,
 
         -- Apply precedence logic to calculate the expected editor experience:

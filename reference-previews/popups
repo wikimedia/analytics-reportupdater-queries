@@ -51,7 +51,7 @@ popups_counts as (
 )
 
 select
-    '$1' AS date,
+    '$1' AS report_date,
     wiki,
     pageview as pageviews,
     poppedOpen / pageview as popups_opened_per_pageview,

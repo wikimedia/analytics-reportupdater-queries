@@ -17,7 +17,7 @@ WITH numbered AS (
         ))
 )
 SELECT
-    '$1' AS date,
+    '$1' AS report_date,
     COUNT(*) AS \`Unique Wiki Count\`
 FROM numbered
 WHERE row_num = 1

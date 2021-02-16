@@ -49,7 +49,7 @@ WITH
     )
 
     SELECT
-        '$1' as date,
+        '$1' as report_date,
         num_uses_of_commons_files_on_content_pages,
         num_commons_files,
         (num_uses_of_commons_files_on_content_pages/num_commons_files) as ratio

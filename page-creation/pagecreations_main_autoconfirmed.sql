@@ -1,4 +1,4 @@
-SELECT DATE('{from_timestamp}') AS date,
+SELECT DATE('{from_timestamp}') AS report_date,
 COUNT(*) AS {wiki_db}
 FROM mediawiki_page_create_3
 WHERE `database`='{wiki_db}'

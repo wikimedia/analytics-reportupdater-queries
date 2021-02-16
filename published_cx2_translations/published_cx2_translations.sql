@@ -1,5 +1,5 @@
 select
-    DATE('{from_timestamp}') AS date,
+    DATE('{from_timestamp}') AS report_date,
     count(translation_id) as cx2_published_translations
 from
     cx_translations

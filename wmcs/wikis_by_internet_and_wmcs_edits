@@ -1,7 +1,7 @@
 #!/bin/bash
 hive -e "
     SELECT
-        '$1' AS date,
+        '$1' AS report_date,
         wiki_db,
         SUM(IF(network_origin='wikimedia_labs', edit_count, 0)) AS wmcs_edits,
         SUM(edit_count) AS total_edits,

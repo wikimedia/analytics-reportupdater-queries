@@ -19,7 +19,7 @@ WITH numbered AS (
         event.OS != ''
 )
 SELECT
-    '$1' AS date,
+    '$1' AS report_date,
     SUM(IF(event_os LIKE 'Linux%', 1, 0)) AS \`Linux\`,
     SUM(IF(event_os LIKE 'WINNT%', 1, 0)) AS \`WINNT\`,
     SUM(IF(event_os LIKE 'Darwin%', 1, 0)) AS \`Darwin\`,

@@ -1,6 +1,6 @@
 #!/bin/bash
 hive -e "
- select '$1' as date,
+ select '$1' as report_date,
         weekly_navigation_count.project as project,
         navigation_count_total / view_count_total as percent_interlanguage_navigation
 
@@ -9,7 +9,7 @@ hive -e "
            from wmf.interlanguage_navigation
           where
             -- The following line prunes partitions correctly
-            date between '$1' and '$2'
+            \`date\` between '$1' and '$2'
             and project_family in ('wikipedia', 'wikivoyage', 'wikisource')
           group by project_family, previous_project
         ) weekly_navigation_count

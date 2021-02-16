@@ -36,7 +36,7 @@ bucketed_events as (
 )
 
 select
-    '$1' as date,
+    '$1' as report_date,
     wiki,
     edit_count_bucket,
     sum(case when action = 'insert-template' then 1 else 0 end) as save,

@@ -63,7 +63,7 @@ metrics AS (
 )
 
 SELECT
-    '$1' AS date,
+    '$1' AS report_date,
     wiki,
     edit_count_bucket,
     save_dialog_create AS create_and_save,

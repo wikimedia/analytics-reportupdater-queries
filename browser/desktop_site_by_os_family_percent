@@ -20,7 +20,7 @@ hive -e "
             FROM slice
         )
     SELECT
-        '$1' AS date,
+        '$1' AS report_date,
         os_family,
         SUM(view_count) / view_count_total AS percent
     FROM slice JOIN total

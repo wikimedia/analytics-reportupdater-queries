@@ -4,7 +4,7 @@
 
 MONTH=$(echo $1 | cut -c1-7)
 hive -e "
- SELECT '$1' AS date,
+ SELECT '$1' AS report_date,
         COUNT(DISTINCT page_id) AS mediainfo_slot_count
 
         -- page excludes deleted pages (which are in archive)
