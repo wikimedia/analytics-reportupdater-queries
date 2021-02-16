@@ -20,7 +20,6 @@ WITH numbered AS (
 ),
 results AS (
     SELECT
-        '$1' AS report_date,
         CASE
             WHEN event_mediawiki RLIKE '^[0-9]+\\.[0-9]+\\.[0-9]+\$'
                 THEN event_mediawiki
@@ -36,12 +35,11 @@ results AS (
     WHERE row_num = 1
 )
 SELECT
-    report_date,
+    '$1' AS report_date,
     version,
     COUNT(*) as count
 FROM results
 GROUP BY
-    report_date,
     version
 ORDER BY count DESC
 LIMIT 10000

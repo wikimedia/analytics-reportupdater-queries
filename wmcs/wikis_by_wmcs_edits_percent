@@ -15,7 +15,6 @@ hive -e "
         ),
         total AS (
             SELECT
-                '$1' AS report_date,
                 'TOTAL' AS wiki_db,
                 ROUND(SUM(wmcs_edits) / SUM(total_edits), 3) AS wmcs_percent
             FROM slice

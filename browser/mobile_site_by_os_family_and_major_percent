@@ -26,7 +26,6 @@ hive -e "
         SUM(view_count) / view_count_total AS percent
     FROM slice JOIN total
     GROUP BY
-        '$1',
         os_family,
         os_major,
         view_count_total

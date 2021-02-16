@@ -16,7 +16,6 @@ hive -e "
         CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '$1' AND
         CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2'
     GROUP BY
-        '$1',
         browser_family,
         browser_major
     ORDER BY view_count DESC
