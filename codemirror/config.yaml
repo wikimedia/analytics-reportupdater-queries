@@ -42,30 +42,6 @@ reports:
         MediaWiki.CodeMirror.sessions.byEditor.wikitext_2017.byEnabled.true: enabled_in_wikitext_2017_session
         MediaWiki.CodeMirror.sessions.byEditor.wikitext_2017.byEnabled.false: disabled_in_wikitext_2017_session
 
-  users_gadget_wiked:
-    granularity: days
-    starts: 2020-12-03
-    type: sql
-    execute: sql/users_gadget_wiked
-    explode_by:
-      wiki_db: sql/wiki_dbs.txt
-    graphite:
-      path: "{_metric}.byWiki.{wiki_db}"
-      metrics:
-        MediaWiki.CodeMirror.preferences.byPreference.wikEd.byEnabled.true: users_gadget_wiked
-
-  users_extension_codeeditor:
-    granularity: days
-    starts: 2020-12-03
-    type: sql
-    execute: sql/users_extension_codeeditor
-    explode_by:
-      wiki_db: sql/wiki_dbs.txt
-    graphite:
-      path: "{_metric}.byWiki.{wiki_db}"
-      metrics:
-        MediaWiki.CodeMirror.preferences.byPreference.CodeEditor.byEnabled.true: users_extensions_codeeditor
-
   users_codemirror_and_wikitext:
     granularity: days
     starts: 2020-12-03
@@ -76,16 +52,8 @@ reports:
     graphite:
       path: "{_metric}.byWiki.{wiki_db}"
       metrics:
-        Mediawiki.CodeMirror.preferences.byPreference.wikitext_2010_and_CodeMirror.byEnabled.true: users_codemirror_and_wikitext
-
-  users_codemirror_and_wikitext_2017:
-    granularity: days
-    starts: 2020-12-03
-    type: sql
-    execute: sql/users_codemirror_and_wikitext_2017
-    explode_by:
-      wiki_db: sql/wiki_dbs.txt
-    graphite:
-      path: "{_metric}.byWiki.{wiki_db}"
-      metrics:
-        Mediawiki.CodeMirror.preferences.byPreference.wikitext_2017_and_CodeMirror.byEnabled.true: users_codemirror_and_newwikitext
+        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2010_and_CodeMirror.byEnabled.true: users_wikitext_2010_and_codemirror
+        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2017_and_CodeMirror.byEnabled.true: users_wikitext_2017_and_codemirror
+        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2010.byEnabled.true: users_wikitext_2010
+        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2017.byEnabled.true: users_wikitext_2017
+        MediaWiki.CodeMirror.preferences.byPreference.wikEd.byEnabled.true: users_gadget_wiked
