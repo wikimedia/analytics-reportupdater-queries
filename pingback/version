@@ -35,7 +35,7 @@ results AS (
     WHERE row_num = 1
 )
 SELECT
-    '$1' AS report_date,
+    '$1' AS \`date\`,
     version,
     COUNT(*) as count
 FROM results

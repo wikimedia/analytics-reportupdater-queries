@@ -1,5 +1,5 @@
 SELECT
-	DATE('{from_timestamp}') AS report_date,
+	DATE('{from_timestamp}') AS `date`,
 	SUM(notification_read_timestamp IS NOT NULL AND days_to_read <= 2 ) AS 0_to_2,
 	SUM(notification_read_timestamp IS NOT NULL AND days_to_read BETWEEN 3 and 5) AS 3_to_5,
 	SUM(notification_read_timestamp IS NOT NULL AND days_to_read BETWEEN 6 AND 10) AS 6_to_10,

@@ -19,7 +19,7 @@ WITH numbered AS (
         event.PHP != ''
 )
 SELECT
-    '$1' AS report_date,
+    '$1' AS \`date\`,
     SUM(IF(event_php LIKE '5.5%', 1, 0)) AS \`5.5\`,
     SUM(IF(event_php LIKE '5.6%', 1, 0)) AS \`5.6\`,
     SUM(IF(event_php LIKE '7.0%', 1, 0)) AS \`7.0\`,

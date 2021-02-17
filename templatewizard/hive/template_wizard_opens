@@ -31,7 +31,7 @@ bucketed_events as (
 )
 
 select
-    '$1' as report_date,
+    '$1' as \`date\`,
     wiki,
     edit_count_bucket,
     count(*) as template_wizard_opens

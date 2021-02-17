@@ -37,7 +37,7 @@ event_counts as (
 )
 
 select
-    '$1' AS report_date,
+    '$1' AS \`date\`,
     wiki,
     pageview as pageviews,
     clickedFootnote / pageview as footnote_clicks_per_pageview,

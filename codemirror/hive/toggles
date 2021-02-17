@@ -1,7 +1,7 @@
 #!/bin/bash
 hive -e "
 SELECT
-    '$1' as report_date,
+    '$1' as \`date\`,
     wiki,
     SUM(CASE WHEN event.editor = 'wikitext' AND event.enabled = true THEN 1 ELSE 0 END) AS toggled_on_from_wikitext,
     SUM(CASE WHEN event.editor = 'wikitext' AND event.enabled = false THEN 1 ELSE 0 END) AS toggled_off_from_wikitext,

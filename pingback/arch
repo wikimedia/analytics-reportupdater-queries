@@ -19,7 +19,7 @@ WITH numbered AS (
         event.arch IS NOT NULL
 )
 SELECT
-    '$1' AS report_date,
+    '$1' AS \`date\`,
     SUM(IF(event_arch = 32, 1, 0)) AS \`32\`,
     SUM(IF(event_arch = 64, 1, 0)) AS \`64\`,
     SUM(IF(event_arch != 32 AND event_arch != 64, 1, 0)) AS \`Other\`

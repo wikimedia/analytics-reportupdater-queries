@@ -50,7 +50,7 @@ latest_events as (
 
 -- Sum each possible combination of attributes.
 select
-    '$1' as report_date,
+    '$1' as \`date\`,
     wiki,
     sum(case when editor = 'wikitext' and enabled = true then 1 else 0 end) as enabled_in_wikitext_session,
     sum(case when editor = 'wikitext' and enabled = false then 1 else 0 end) as disabled_in_wikitext_session,

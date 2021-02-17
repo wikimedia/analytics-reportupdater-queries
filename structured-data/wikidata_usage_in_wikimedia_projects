@@ -49,7 +49,7 @@ WITH
     )
 
     SELECT
-        '$1' as report_date,
+        '$1' as \`date\`,
         num_pages_use_wikidata,
         num_content_page,
         num_pages_use_wikidata/num_content_page as percentage

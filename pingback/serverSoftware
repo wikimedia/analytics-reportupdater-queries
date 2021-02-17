@@ -19,7 +19,7 @@ WITH numbered AS (
         event.serverSoftware != ''
 )
 SELECT
-    '$1' AS report_date,
+    '$1' AS \`date\`,
     SUM(IF(event_serversoftware LIKE 'Apache%', 1, 0)) AS \`Apache\`,
     SUM(IF(event_serversoftware LIKE 'Microsoft-IIS%', 1, 0)) AS \`Microsoft-IIS\`,
     SUM(IF(event_serversoftware LIKE 'nginx%', 1, 0)) AS \`nginx\`,

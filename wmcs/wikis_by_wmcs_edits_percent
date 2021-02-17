@@ -22,7 +22,7 @@ hive -e "
     SELECT * FROM total
     UNION ALL
     SELECT
-        '$1' AS report_date,
+        '$1' AS \`date\`,
         wiki_db,
         wmcs_percent
     FROM slice

@@ -1,4 +1,4 @@
-SELECT DATE('{from_timestamp}') AS report_date, SUM(notifications_sent) AS notifications_sent, SUM(notifications_read) AS notifications_read
+SELECT DATE('{from_timestamp}') AS `date`, SUM(notifications_sent) AS notifications_sent, SUM(notifications_read) AS notifications_read
 FROM
 (
 	# amount of sent notifications per month

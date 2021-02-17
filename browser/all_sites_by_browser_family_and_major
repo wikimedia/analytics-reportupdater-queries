@@ -1,7 +1,7 @@
 #!/bin/bash
 hive -e "
     SELECT
-        '$1' AS report_date,
+        '$1' AS \`date\`,
         browser_family,
         browser_major,
         SUM(view_count) as view_count

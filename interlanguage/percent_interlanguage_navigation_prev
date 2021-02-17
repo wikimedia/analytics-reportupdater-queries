@@ -1,6 +1,6 @@
 #!/bin/bash
 hive -e "
- select '$1' as report_date,
+ select '$1' as \`date\`,
         weekly_navigation_count.project as project,
         navigation_count_total / view_count_total as percent_interlanguage_navigation
 

@@ -39,7 +39,7 @@ bucketed_events AS (
 )
 
 SELECT
-    '$1' AS report_date,
+    '$1' AS \`date\`,
     wiki,
     edit_count_bucket,
     action,

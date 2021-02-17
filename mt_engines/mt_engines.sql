@@ -1,5 +1,5 @@
 select
-  date('{from_timestamp}') as report_date,
+  date('{from_timestamp}') as `date`,
   case cxc_origin
     when 'scratch' then 'No machine translation'
     else cxc_origin
