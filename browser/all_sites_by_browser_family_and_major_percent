@@ -23,13 +23,13 @@ hive -e "
         '$1' AS \`date\`,
         browser_family,
         browser_major,
-        SUM(view_count) / view_count_total AS percent
+        SUM(view_count) / view_count_total AS \`percent\`
     FROM slice JOIN total
     GROUP BY
         browser_family,
         browser_major,
         view_count_total
-    ORDER BY percent DESC
+    ORDER BY \`percent\` DESC
     LIMIT 1000
     ;
 " 2> /dev/null | grep -v parquet.hadoop

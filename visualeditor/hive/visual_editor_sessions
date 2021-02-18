@@ -36,7 +36,7 @@ bucketed_events AS (
 )
 
 SELECT
-    '$1' AS date,
+    '$1' AS \`date\`,
     wiki,
     edit_count_bucket,
     -- Multiply by 16 to compensate for sampling.

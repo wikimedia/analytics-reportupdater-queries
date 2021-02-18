@@ -60,6 +60,6 @@ group by
 -- See https://phabricator.wikimedia.org/T189475#4770686
 select
   date('$timestamp') as \`date\`,
-  true as done;
+  true as done
 
 " 2> /dev/null | grep -v parquet.hadoop | grep -v 'project' # removes insert select headers
