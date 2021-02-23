@@ -1,0 +1,49 @@
+#!/bin/bash
+
+hive -e "
+with all_events AS (
+    select
+        wiki,
+        event.action,
+        event.performer.user_edit_count,
+        event.performer.user_id
+    from
+        event.TemplateWizard
+    where
+        event.action in (
+            'cancel-dialog',
+            'insert-template'
+        )
+        and year = cast(split('$1', '-')[0] as int)
+        and month = cast(split('$1', '-')[1] as int)
+        and day = cast(split('$1', '-')[2] as int)
+        and event.performer.user_id is not null
+),
+
+bucketed_events as (
+    select
+        wiki,
+        action,
+        case when user_id = 0 then 'anonymous'
+            when user_edit_count > 10000 then 'over10k'
+            when user_edit_count > 1000 then 'over1k'
+            when user_edit_count > 100 then 'over100'
+            when user_edit_count > 10 then 'over10'
+            else 'under11'
+        end edit_count_bucket
+    from
+        all_events
+)
+
+select
+    '$1' as \`date\`,
+    wiki,
+    edit_count_bucket,
+    sum(case when action = 'insert-template' then 1 else 0 end) as save,
+    sum(case when action = 'cancel-dialog' then 1 else 0 end) as abort
+from
+    bucketed_events
+group by
+    wiki,
+    edit_count_bucket;
+" 2> /dev/null | grep -v parquet.hadoop
