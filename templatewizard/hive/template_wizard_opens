@@ -31,7 +31,7 @@ select
     edit_count_bucket,
     count(*) as template_wizard_opens
 from
-    bucketed_events
+    all_events
 group by
     wiki,
     edit_count_bucket;
