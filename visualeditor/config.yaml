@@ -35,7 +35,7 @@ reports:
     funnel: true
     execute: hive/template_dialog_opens
     graphite:
-      path: "{_metric}.byWiki.{wiki}"
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
       metrics:
         MediaWiki.VisualEditor.templateDialog.open.byMethod.menu: template_dialog_opens_from_menu
         MediaWiki.VisualEditor.templateDialog.open.byMethod.keyboard: template_dialog_opens_from_keyboard
@@ -51,7 +51,7 @@ reports:
     funnel: true
     execute: hive/template_dialog_parameters_by_edit_success
     graphite:
-      path: "{_metric}.byWiki.{wiki}"
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
       metrics:
         MediaWiki.VisualEditor.templateDialog.add_known_param.byEditSaved.true: template_dialog_add_known_param_success
         MediaWiki.VisualEditor.templateDialog.add_known_param.byEditSaved.false: template_dialog_add_known_param_abort
@@ -66,7 +66,7 @@ reports:
     funnel: true
     execute: hive/template_dialog_other_events
     graphite:
-      path: "{_metric}.byWiki.{wiki}"
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
       metrics:
         MediaWiki.VisualEditor.templateDialog.edit_parameter: template_dialog_edit_parameter
         MediaWiki.VisualEditor.templateDialog.doc_click: template_dialog_doc_click

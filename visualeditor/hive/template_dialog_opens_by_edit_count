@@ -20,11 +20,11 @@ bucketed_events AS (
     SELECT
         wiki,
         CASE WHEN user_id = 0 THEN 'anonymous'
-            WHEN user_editcount > 10000 THEN 'over10k'
-            WHEN user_editcount > 1000 THEN 'over1k'
-            WHEN user_editcount > 100 THEN 'over100'
-            WHEN user_editcount > 10 THEN 'over10'
-            ELSE 'under11'
+            WHEN user_editcount > 1000 THEN '1000+ edits'
+            WHEN user_editcount > 100 THEN '100-999 edits'
+            WHEN user_editcount > 4 THEN '5-99 edits'
+            WHEN user_editcount > 0 THEN '1-4 edits'
+            ELSE '0 edits'
         END edit_count_bucket
     FROM
         all_events
