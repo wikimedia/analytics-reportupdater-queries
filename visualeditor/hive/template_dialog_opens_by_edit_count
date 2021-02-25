@@ -1,4 +1,7 @@
 #!/bin/bash
+
+IFS='-' read -a date <<< $1
+
 hive -e "
 WITH all_events AS (
     SELECT
@@ -11,9 +14,9 @@ WITH all_events AS (
         event.feature = 'transclusion'
         AND event.action LIKE 'window-open-%'
         -- FIXME: How can we filter out oversampled events?
-        AND year = cast(split('$1', '-')[0] as int)
-        AND month = cast(split('$1', '-')[1] as int)
-        AND day = cast(split('$1', '-')[2] as int)
+        and year = ${date[0]}
+        and month = ${date[1]}
+        and day = ${date[2]}
 ),
 
 bucketed_events AS (

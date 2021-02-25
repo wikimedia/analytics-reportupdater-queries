@@ -1,4 +1,7 @@
 #!/bin/bash
+
+IFS='-' read -a date <<< $1
+
 #
 # Estimate the relative frequency of user interactions with Extension:Cite
 # references:
@@ -29,9 +32,9 @@ event_counts as (
     from event.referencepreviewsbaseline
     where
         useragent.is_bot = false
-        and year = cast(split('$1', '-')[0] as int)
-        and month = cast(split('$1', '-')[1] as int)
-        and day = cast(split('$1', '-')[2] as int)
+        and year = ${date[0]}
+        and month = ${date[1]}
+        and day = ${date[2]}
     group by
         wiki
 )

@@ -1,4 +1,7 @@
 #!/bin/bash
+
+IFS='-' read -a date <<< $1
+
 hive -e "
 
 -- Get all CodeMirror usage events for the day.
@@ -19,9 +22,9 @@ with all_events as (
     from
         event.CodeMirrorUsage
     where
-        year = cast(split('$1', '-')[0] as int)
-        and month = cast(split('$1', '-')[1] as int)
-        and day = cast(split('$1', '-')[2] as int)
+        year = ${date[0]}
+        and month = ${date[1]}
+        and day = ${date[2]}
 ),
 
 -- Group by edit session.

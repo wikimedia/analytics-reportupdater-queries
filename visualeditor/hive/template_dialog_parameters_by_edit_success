@@ -1,4 +1,7 @@
 #!/bin/bash
+
+IFS='-' read -a date <<< $1
+
 hive -e "
 WITH edit_events AS (
     SELECT
@@ -13,9 +16,9 @@ WITH edit_events AS (
             OR event.action = 'abort'
         )
         AND event.is_oversample = false
-        AND year = cast(split('$1', '-')[0] as int)
-        AND month = cast(split('$1', '-')[1] as int)
-        AND day = cast(split('$1', '-')[2] as int)
+        AND year = ${date[0]}
+        AND month = ${date[1]}
+        AND day = ${date[2]}
 ),
 ve_events AS (
     SELECT
@@ -32,9 +35,9 @@ ve_events AS (
             OR event.action = 'add-unknown-parameter'
         )
         AND event.feature = 'transclusion'
-        AND year = cast(split('$1', '-')[0] as int)
-        AND month = cast(split('$1', '-')[1] as int)
-        AND day = cast(split('$1', '-')[2] as int)
+        AND year = ${date[0]}
+        AND month = ${date[1]}
+        AND day = ${date[2]}
 ),
 
 bucketed_events AS (

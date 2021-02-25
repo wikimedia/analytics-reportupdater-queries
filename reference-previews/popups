@@ -28,6 +28,8 @@
 # minor FIXME: Assumes a daily granularity without verifying the $2 parameter.
 #
 
+IFS='-' read -a date <<< $1
+
 hive -e "
 with
 
@@ -43,9 +45,9 @@ popups_counts as (
     from event.referencepreviewspopups
     where
         useragent.is_bot = false
-        and year = cast(split('$1', '-')[0] as int)
-        and month = cast(split('$1', '-')[1] as int)
-        and day = cast(split('$1', '-')[2] as int)
+        and year = ${date[0]}
+        and month = ${date[1]}
+        and day = ${date[2]}
     group by
         wiki
 )
