@@ -52,16 +52,8 @@ reports:
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki_db}"
       metrics:
-        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2010_and_CodeMirror.byEnabled.true: users_codemirror_and_wikitext
-
-  users_codemirror_and_wikitext_2017:
-    granularity: days
-    starts: 2020-12-03
-    type: sql
-    execute: sql/users_codemirror_and_wikitext_2017
-    explode_by:
-      wiki_db: sql/wiki_dbs.txt
-    graphite:
-      path: "{_metric}.byWiki.{wiki_db}"
-      metrics:
-        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2017_and_CodeMirror.byEnabled.true: users_codemirror_and_newwikitext
+        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2010.byEnabled.true: users_wikitext_2010
+        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2017.byEnabled.true: users_wikitext_2017
+        MediaWiki.CodeMirror.preferences.byPreference.CodeMirror.byEnabled.true: use_syntax_highlighting
+        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2010_and_CodeMirror.byEnabled.true: users_wikitext_2010_and_codemirror
+        MediaWiki.CodeMirror.preferences.byPreference.wikitext_2017_and_CodeMirror.byEnabled.true: users_wikitext_2017_and_codemirror
