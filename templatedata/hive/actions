@@ -32,6 +32,7 @@ WITH events AS (
             'template-description-change',
             'parameter-reorder'
         )
+        and useragent.is_bot = false
         and year = ${date[0]}
         and month = ${date[1]}
         and day = ${date[2]}

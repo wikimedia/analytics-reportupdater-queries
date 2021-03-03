@@ -19,7 +19,8 @@ WITH all_events AS (
         event.VisualEditorFeatureUse
     WHERE
         event.feature = 'transclusion'
-        AND event.is_oversample = false
+        and useragent.is_bot = false
+        and event.is_oversample = false
         and year = ${date[0]}
         and month = ${date[1]}
         and day = ${date[2]}

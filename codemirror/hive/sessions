@@ -22,7 +22,8 @@ with all_events as (
     from
         event.CodeMirrorUsage
     where
-        year = ${date[0]}
+        useragent.is_bot = false
+        and year = ${date[0]}
         and month = ${date[1]}
         and day = ${date[2]}
 ),
