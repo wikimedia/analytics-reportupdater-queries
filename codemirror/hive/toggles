@@ -16,7 +16,8 @@ with bucketed_users as (
         event.enabled
     from event.CodeMirrorUsage
     where
-        event.toggled = true
+        useragent.is_bot = false
+        and event.toggled = true
         and year = ${date[0]}
         and month = ${date[1]}
         and day = ${date[2]}

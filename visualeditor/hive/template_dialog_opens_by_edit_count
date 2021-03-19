@@ -14,6 +14,7 @@ WITH all_events AS (
         event.feature = 'transclusion'
         AND event.action LIKE 'window-open-%'
         and event.is_oversample = false
+        and useragent.is_bot = false
         and year = ${date[0]}
         and month = ${date[1]}
         and day = ${date[2]}

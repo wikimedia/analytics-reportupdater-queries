@@ -18,6 +18,7 @@ WHERE
         'visualeditor',
         'wikitext-2017'
     )
+    AND useragent.is_bot = false
     AND event.is_oversample = false
     and year = ${date[0]}
     and month = ${date[1]}
