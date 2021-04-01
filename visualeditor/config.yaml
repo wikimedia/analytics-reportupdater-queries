@@ -30,7 +30,7 @@ reports:
   template_dialog_opens:
     granularity: days
     starts: 2020-12-10
-    type: script
+    type: hive
     lag: 18000
     execute: hive/template_dialog_opens
     graphite:
