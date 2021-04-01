@@ -65,7 +65,8 @@ metrics AS (
 SELECT
     '$1' AS \`date\`,
     wiki,
-    edit_count_bucket,
+    -- T279046 - replace illegal characters
+    replace(replace(edit_count_bucket, '+', ' or more'), ' ', '_') as edit_count_bucket,
     save_dialog_create AS create_and_save,
     (dialog_open_create - save_dialog_create) AS create_and_abandon,
     save_dialog_edit AS edit_and_save,
