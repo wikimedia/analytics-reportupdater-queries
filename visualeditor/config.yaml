@@ -32,7 +32,6 @@ reports:
     starts: 2020-12-10
     type: script
     lag: 18000
-    funnel: true
     execute: hive/template_dialog_opens
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
