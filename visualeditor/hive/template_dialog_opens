@@ -9,11 +9,11 @@ WITH all_events AS (
         event.action,
         event.user_id,
         CASE WHEN event.user_id = 0 THEN 'anonymous'
-            WHEN event.user_editcount > 1000 THEN '1000+ edits'
-            WHEN event.user_editcount > 100 THEN '100-999 edits'
-            WHEN event.user_editcount > 4 THEN '5-99 edits'
-            WHEN event.user_editcount > 0 THEN '1-4 edits'
-            ELSE '0 edits'
+            WHEN event.user_editcount > 1000 THEN '1000_or_more_edits'
+            WHEN event.user_editcount > 100 THEN '100-999_edits'
+            WHEN event.user_editcount > 4 THEN '5-99_edits'
+            WHEN event.user_editcount > 0 THEN '1-4_edits'
+            ELSE '0_edits'
         END edit_count_bucket
     FROM
         event.VisualEditorFeatureUse

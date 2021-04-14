@@ -41,7 +41,8 @@ WITH events AS (
 SELECT
     '$1' AS \`date\`,
     wiki,
-    edit_count_bucket,
+    -- T279046 - replace illegal characters
+    replace(replace(edit_count_bucket, '+', ' or more'), ' ', '_') as edit_count_bucket,
     action,
     COUNT(*) AS count
 FROM

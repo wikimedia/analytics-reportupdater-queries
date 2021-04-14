@@ -35,7 +35,8 @@ with all_events AS (
 select
     '$1' as \`date\`,
     wiki,
-    edit_count_bucket,
+    -- T279046 - replace illegal characters
+    replace(replace(edit_count_bucket, '+', ' or more'), ' ', '_') as edit_count_bucket,
     sum(case when action = 'insert-template' then 1 else 0 end) as save,
     sum(case when action = 'cancel-dialog' then 1 else 0 end) as abort
 from
