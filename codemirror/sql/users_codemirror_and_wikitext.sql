@@ -22,11 +22,11 @@ WITH
         SELECT
             editor_preference.user_id,
             CASE
-                WHEN user_editcount >= 1000 THEN '1000+ edits'
-                WHEN user_editcount >= 100 THEN '100-999 edits'
-                WHEN user_editcount >= 5 THEN '5-99 edits'
-                WHEN user_editcount >= 1 THEN '1-4 edits'
-                ELSE '0 edits'
+                WHEN user_editcount >= 1000 THEN '1000_or_more_edits'
+                WHEN user_editcount >= 100 THEN '100-999_edits'
+                WHEN user_editcount >= 5 THEN '5-99_edits'
+                WHEN user_editcount >= 1 THEN '1-4_edits'
+                ELSE '0_edits'
             END as edit_count_bucket
         FROM editor_preference
         JOIN user
