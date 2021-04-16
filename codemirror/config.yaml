@@ -14,7 +14,7 @@ defaults:
 reports:
   toggles:
     granularity: days
-    starts: 2020-12-03
+    starts: 2021-01-16
     type: script
     lag: 18000
     funnel: true
@@ -29,7 +29,7 @@ reports:
 
   sessions:
     granularity: days
-    starts: 2020-12-03
+    starts: 2021-01-16
     type: script
     lag: 18000
     funnel: true
@@ -44,7 +44,7 @@ reports:
 
   users_codemirror_and_wikitext:
     granularity: days
-    starts: 2020-12-03
+    starts: 2021-04-16
     type: sql
     execute: sql/users_codemirror_and_wikitext
     explode_by:

@@ -5,7 +5,7 @@ graphite:
 reports:
   dialog:
     granularity: days
-    starts: 2020-12-14
+    starts: 2021-01-16
     type: script
     lag: 18000
     funnel: true
@@ -20,7 +20,7 @@ reports:
 
   actions:
     granularity: days
-    starts: 2020-12-14
+    starts: 2021-01-16
     type: script
     lag: 18000
     funnel: true
