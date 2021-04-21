@@ -1,12 +1,6 @@
-#!/bin/bash
-
-IFS='-' read -a date <<< $1
-
-hive -e "
 with all_events AS (
     select
         wiki,
-        event.action,
         case
             when event.performer.user_id is null then 'anonymous'
             -- TODO: after the user_edit_count_bucket producer is fully migrated, probably in
@@ -22,26 +16,21 @@ with all_events AS (
     from
         event.TemplateWizard
     where
-        event.action in (
-            'cancel-dialog',
-            'insert-template'
-        )
+        event.action = 'launch'
         and useragent.is_bot = false
-        and year = ${date[0]}
-        and month = ${date[1]}
-        and day = ${date[2]}
+        and year = {year}
+        and month = {month}
+        and day = {day}
 )
 
 select
-    '$1' as \`date\`,
+    '{from_date}' as `date`,
     wiki,
     -- T279046 - replace illegal characters
     replace(replace(edit_count_bucket, '+', ' or more'), ' ', '_') as edit_count_bucket,
-    sum(case when action = 'insert-template' then 1 else 0 end) as save,
-    sum(case when action = 'cancel-dialog' then 1 else 0 end) as abort
+    count(*) as template_wizard_opens
 from
     all_events
 group by
     wiki,
     edit_count_bucket;
-" 2> /dev/null | grep -v parquet.hadoop

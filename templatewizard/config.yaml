@@ -6,7 +6,7 @@ reports:
   template_wizard_opens:
     granularity: days
     starts: 2021-01-16
-    type: script
+    type: hive
     lag: 18000
     funnel: true
     execute: hive/template_wizard_opens
@@ -18,7 +18,7 @@ reports:
   template_wizard_exits:
     granularity: days
     starts: 2021-01-16
-    type: script
+    type: hive
     lag: 18000
     funnel: true
     execute: hive/template_wizard_exits

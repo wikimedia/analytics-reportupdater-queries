@@ -6,7 +6,7 @@ reports:
   visual_editor_sessions:
     granularity: days
     starts: 2021-01-16
-    type: script
+    type: hive
     lag: 18000
     funnel: true
     execute: hive/visual_editor_sessions
@@ -18,7 +18,7 @@ reports:
   template_dialog_opens_by_edit_count:
     granularity: days
     starts: 2021-01-16
-    type: script
+    type: hive
     lag: 18000
     funnel: true
     execute: hive/template_dialog_opens_by_edit_count
@@ -45,7 +45,7 @@ reports:
   template_dialog_parameters_by_edit_success:
     granularity: days
     starts: 2021-01-16
-    type: script
+    type: hive
     lag: 18000
     funnel: true
     execute: hive/template_dialog_parameters_by_edit_success
@@ -60,7 +60,7 @@ reports:
   template_dialog_other_events:
     granularity: days
     starts: 2021-01-16
-    type: script
+    type: hive
     lag: 18000
     funnel: true
     execute: hive/template_dialog_other_events

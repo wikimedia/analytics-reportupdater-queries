@@ -1,9 +1,3 @@
-#!/bin/bash
-
-IFS='-' read -a date <<< $1
-
-hive -e "
-
 -- Get all CodeMirror usage events for the day.
 with all_events as (
     select
@@ -23,9 +17,9 @@ with all_events as (
         event.CodeMirrorUsage
     where
         useragent.is_bot = false
-        and year = ${date[0]}
-        and month = ${date[1]}
-        and day = ${date[2]}
+        and year = {year}
+        and month = {month}
+        and day = {day}
 ),
 
 -- Group by edit session.
@@ -62,7 +56,7 @@ latest_events as (
 
 -- Sum each possible combination of attributes.
 select
-    '$1' as \`date\`,
+    '{from_date}' as `date`,
     wiki,
     -- T279046 - replace illegal characters
     replace(replace(edit_count_bucket, '+', ' or more'), ' ', '_') as edit_count_bucket,
@@ -75,4 +69,3 @@ from
 group by
     wiki,
     edit_count_bucket;
-" 2> /dev/null | grep -v parquet.hadoop

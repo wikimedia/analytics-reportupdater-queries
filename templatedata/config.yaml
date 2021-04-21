@@ -6,7 +6,7 @@ reports:
   dialog:
     granularity: days
     starts: 2021-01-16
-    type: script
+    type: hive
     lag: 18000
     funnel: true
     execute: hive/dialog
@@ -21,7 +21,7 @@ reports:
   actions:
     granularity: days
     starts: 2021-01-16
-    type: script
+    type: hive
     lag: 18000
     funnel: true
     execute: hive/actions

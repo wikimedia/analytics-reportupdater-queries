@@ -1,8 +1,3 @@
-#!/bin/bash
-
-IFS='-' read -a date <<< $1
-
-hive -e "
 WITH edit_events AS (
     SELECT
         wiki,
@@ -17,9 +12,9 @@ WITH edit_events AS (
         )
         AND useragent.is_bot = false
         AND event.is_oversample = false
-        AND year = ${date[0]}
-        AND month = ${date[1]}
-        AND day = ${date[2]}
+        and year = {year}
+        and month = {month}
+        and day = {day}
 ),
 ve_events AS (
     SELECT
@@ -37,9 +32,9 @@ ve_events AS (
         )
         AND useragent.is_bot = false
         AND event.feature = 'transclusion'
-        AND year = ${date[0]}
-        AND month = ${date[1]}
-        AND day = ${date[2]}
+        AND year = {year}
+        AND month = {month}
+        AND day = {day}
 ),
 
 bucketed_events AS (
@@ -58,7 +53,7 @@ bucketed_events AS (
 )
 
 SELECT
-    '$1' AS \`date\`,
+    '{from_date}' AS `date`,
     ve_events.wiki,
     edit_count_bucket,
     -- Compensate for sampling by multiplying by 1 / 6.25% = 16
@@ -98,4 +93,3 @@ WHERE
 GROUP BY
     ve_events.wiki,
     edit_count_bucket;
-" 2> /dev/null | grep -v parquet.hadoop

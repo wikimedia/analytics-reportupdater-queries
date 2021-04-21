@@ -1,8 +1,3 @@
-#!/bin/bash
-
-IFS='-' read -a date <<< $1
-
-hive -e "
 WITH events AS (
     SELECT
         wiki,
@@ -23,9 +18,9 @@ WITH events AS (
         event.TemplateDataEditor
     WHERE
         useragent.is_bot = false
-        and year = ${date[0]}
-        and month = ${date[1]}
-        and day = ${date[2]}
+        AND year = {year}
+        AND month = {month}
+        AND day = {day}
 ),
 metrics AS (
     SELECT
@@ -63,7 +58,7 @@ metrics AS (
 )
 
 SELECT
-    '$1' AS \`date\`,
+    '{from_date}' AS `date`,
     wiki,
     -- T279046 - replace illegal characters
     replace(replace(edit_count_bucket, '+', ' or more'), ' ', '_') as edit_count_bucket,
@@ -73,4 +68,3 @@ SELECT
     (dialog_open_edit - save_dialog_edit) AS edit_and_abandon
 FROM
     metrics;
-" 2> /dev/null | grep -v parquet.hadoop

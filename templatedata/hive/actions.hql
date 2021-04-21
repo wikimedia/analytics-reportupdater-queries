@@ -1,8 +1,3 @@
-#!/bin/bash
-
-IFS='-' read -a date <<< $1
-
-hive -e "
 WITH events AS (
     SELECT
         wiki,
@@ -33,13 +28,13 @@ WITH events AS (
             'parameter-reorder'
         )
         and useragent.is_bot = false
-        and year = ${date[0]}
-        and month = ${date[1]}
-        and day = ${date[2]}
+        and year = {year}
+        and month = {month}
+        and day = {day}
 )
 
 SELECT
-    '$1' AS \`date\`,
+    '{from_date}' AS `date`,
     wiki,
     -- T279046 - replace illegal characters
     replace(replace(edit_count_bucket, '+', ' or more'), ' ', '_') as edit_count_bucket,
@@ -51,4 +46,3 @@ GROUP BY
     wiki,
     edit_count_bucket,
     action;
-" 2> /dev/null | grep -v parquet.hadoop
