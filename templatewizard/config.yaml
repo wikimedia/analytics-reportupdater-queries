@@ -8,7 +8,6 @@ reports:
     starts: 2021-01-16
     type: hive
     lag: 18000
-    funnel: true
     execute: hive/template_wizard_opens
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
@@ -20,7 +19,6 @@ reports:
     starts: 2021-01-16
     type: hive
     lag: 18000
-    funnel: true
     execute: hive/template_wizard_exits
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"

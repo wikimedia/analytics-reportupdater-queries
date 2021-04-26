@@ -8,7 +8,6 @@ reports:
     starts: 2021-01-16
     type: hive
     lag: 18000
-    funnel: true
     execute: hive/visual_editor_sessions
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
@@ -20,7 +19,6 @@ reports:
     starts: 2021-01-16
     type: hive
     lag: 18000
-    funnel: true
     execute: hive/template_dialog_opens_by_edit_count
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
@@ -47,7 +45,6 @@ reports:
     starts: 2021-01-16
     type: hive
     lag: 18000
-    funnel: true
     execute: hive/template_dialog_parameters_by_edit_success
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
@@ -62,7 +59,6 @@ reports:
     starts: 2021-01-16
     type: hive
     lag: 18000
-    funnel: true
     execute: hive/template_dialog_other_events
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"

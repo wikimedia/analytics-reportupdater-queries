@@ -2,7 +2,6 @@ reports:
 
     mt_engines:
         granularity: weeks
-        funnel: true
         starts: 2016-01-18
         lag: 86400 # wait 1 day to compute last week
 

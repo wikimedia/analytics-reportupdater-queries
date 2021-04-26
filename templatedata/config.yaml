@@ -8,7 +8,6 @@ reports:
     starts: 2021-01-16
     type: hive
     lag: 18000
-    funnel: true
     execute: hive/dialog
     graphite:
       path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
@@ -23,7 +22,6 @@ reports:
     starts: 2021-01-16
     type: hive
     lag: 18000
-    funnel: true
     execute: hive/actions
     graphite:
       path: "MediaWiki.TemplateData.template.{action}.{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"

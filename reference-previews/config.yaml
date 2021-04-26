@@ -5,7 +5,6 @@ graphite:
 reports:
   baseline:
     type: script
-    funnel: true
     granularity: days
     lag: 10800 # Wait three hours for data to land.
     starts: 2019-11-02
@@ -18,7 +17,6 @@ reports:
 
   cite:
     type: script
-    funnel: true
     granularity: days
     lag: 10800 # Wait three hours for data to land.
     starts: 2019-11-01
@@ -31,7 +29,6 @@ reports:
 
   popups:
     type: script
-    funnel: true
     granularity: days
     lag: 10800 # Wait three hours for data to land.
     starts: 2019-11-01 # TBD: anticipated deployment
