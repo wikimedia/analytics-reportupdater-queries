@@ -4,7 +4,7 @@ graphite:
 
 reports:
   baseline:
-    type: script
+    type: hive
     granularity: days
     lag: 10800 # Wait three hours for data to land.
     starts: 2019-11-02
@@ -16,7 +16,7 @@ reports:
             reference_previews.baseline.content_clicks_per_pageview: content_clicks_per_pageview
 
   cite:
-    type: script
+    type: hive
     granularity: days
     lag: 10800 # Wait three hours for data to land.
     starts: 2019-11-01
@@ -28,7 +28,7 @@ reports:
             reference_previews.cite.content_clicks_from_reference_section_per_pageview: content_clicks_from_reference_section_per_pageview
 
   popups:
-    type: script
+    type: hive
     granularity: days
     lag: 10800 # Wait three hours for data to land.
     starts: 2019-11-01 # TBD: anticipated deployment
