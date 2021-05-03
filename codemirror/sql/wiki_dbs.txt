@@ -1,3 +1,4 @@
+cawiki
 enwiki
 dewiki
 trwiki
