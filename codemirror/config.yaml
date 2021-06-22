@@ -42,7 +42,7 @@ reports:
 
   users_codemirror_and_wikitext:
     granularity: days
-    starts: 2021-04-16
+    starts: 2021-06-21
     type: sql
     execute: sql/users_codemirror_and_wikitext
     explode_by:
