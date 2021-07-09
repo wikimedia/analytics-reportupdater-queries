@@ -25,3 +25,17 @@ reports:
       metrics:
         MediaWiki.TemplateWizard.save: save
         MediaWiki.TemplateWizard.abort: abort
+
+  template_wizard_template_has_template_data:
+    granularity: days
+    starts: 2021-01-16
+    type: hive
+    lag: 18000
+    execute: hive/template_wizard_template_has_template_data
+    graphite:
+      path: "{_metric}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.TemplateWizard.template.hasTemplateData.true.bySave: has_template_data_on_save
+        MediaWiki.TemplateWizard.template.hasTemplateData.false.bySave: no_template_data_on_save
+        MediaWiki.TemplateWizard.template.hasTemplateData.true.byEdit: has_template_data_on_edit
+        MediaWiki.TemplateWizard.template.hasTemplateData.false.byEdit: no_template_data_on_edit
