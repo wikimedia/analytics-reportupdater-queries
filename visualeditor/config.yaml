@@ -65,3 +65,17 @@ reports:
       metrics:
         MediaWiki.VisualEditor.templateDialog.edit_parameter: template_dialog_edit_parameter
         MediaWiki.VisualEditor.templateDialog.doc_click: template_dialog_doc_click
+
+  template_dialog_template_has_template_data:
+    granularity: days
+    starts: 2021-01-16
+    type: hive
+    lag: 18000
+    execute: hive/template_dialog_template_has_template_data
+    graphite:
+      path: "{_metric}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.VisualEditor.templateDialog.template.hasTemplateData.true.bySave: has_template_data_on_save
+        MediaWiki.VisualEditor.templateDialog.template.hasTemplateData.false.bySave: no_template_data_on_save
+        MediaWiki.VisualEditor.templateDialog.template.hasTemplateData.true.byEdit: has_template_data_on_edit
+        MediaWiki.VisualEditor.templateDialog.template.hasTemplateData.false.byEdit: no_template_data_on_edit
