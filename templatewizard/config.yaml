@@ -39,3 +39,14 @@ reports:
         MediaWiki.TemplateWizard.template.hasTemplateData.false.bySave: no_template_data_on_save
         MediaWiki.TemplateWizard.template.hasTemplateData.true.byEdit: has_template_data_on_edit
         MediaWiki.TemplateWizard.template.hasTemplateData.false.byEdit: no_template_data_on_edit
+
+  template_wizard_wikitext_sessions:
+    granularity: days
+    starts: 2021-07-30
+    type: hive
+    lag: 18000
+    execute: hive/template_wizard_wikitext_sessions
+    graphite:
+      path: "{_metric}.byEditCount.{edit_count_bucket}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.TemplateWizard.wikitextSession: total_template_wizard_wikitext_sessions
