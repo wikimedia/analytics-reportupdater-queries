@@ -1,10 +1,14 @@
 WITH
 
--- Most recent event for each template
-latest_template_data_events AS (
+-- Templates that were modified on a given day and whether they have template data
+template_data_events AS (
     SELECT
-        event.template_name AS template_name,
-        MAX(dt) AS latest_dt,
+        -- Extract and strip namespace from template names
+        SUBSTR(
+            event.template_name,
+            LOCATE(':', event.template_name) + 1
+        ) AS template_name,
+        event.has_template_data,
         wiki
     FROM
         event.TemplateDataApi
@@ -13,96 +17,57 @@ latest_template_data_events AS (
         AND year = {year}
         AND month = {month}
         AND day = {day}
+),
+
+-- Entry per template and whether it had template data at some point on a given day
+template_data_events_grouped AS (
+    SELECT
+        MAX(has_template_data) AS has_template_data,
+        template_name,
+        wiki
+    FROM
+        template_data_events
     GROUP BY
-        event.template_name,
+        template_name,
         wiki
 ),
 
--- Deduplicated templates and whether they now have any template data
-template_data_events AS (
+-- Template usages categorized by dialog action
+template_dialog_events AS (
     SELECT
-        event.has_template_data,
-        -- Remove any namespace prefixes from the template names
+        CASE
+            WHEN event.action = 'add-template' THEN 'open'
+            WHEN event.action = 'edit' THEN 'open'
+            WHEN event.action = 'save' THEN 'save'
+            ELSE 'other'
+        END AS action,
+        -- Extract and strip namespace from the first template name
         SUBSTR(
-            event.template_name,
-            LOCATE(':', event.template_name) + 1,
-            LENGTH(event.template_name)
+            event.template_names[0],
+            LOCATE(':', event.template_names[0]) + 1
         ) AS template_name,
-        all_events.wiki
+        wiki
     FROM
-        event.TemplateDataApi AS all_events
-    JOIN latest_template_data_events AS latest_events
-        ON latest_events.template_name = event.template_name
-            AND latest_events.latest_dt = all_events.dt
-            AND latest_events.wiki = all_events.wiki
+        event.VisualEditorTemplateDialogUse
     WHERE
         useragent.is_bot = false
         AND year = {year}
         AND month = {month}
         AND day = {day}
-),
-
--- Deduplicated templates which were used in a save/edit template dialog session
-template_dialog_events AS (
-    SELECT
-        event.action,
-        -- Remove any namespace prefixes from the template names
-        SUBSTR(
-            template_name,
-            LOCATE(':', template_name) + 1,
-            LENGTH(template_name)
-        ) AS template_name,
-        wiki
-    FROM
-        event.VisualEditorTemplateDialogUse
-    LATERAL VIEW EXPLODE(event.template_names) template_names AS template_name
-    WHERE
-        (
-            event.action = 'save'
-            OR event.action = 'edit'
-        )
-        AND useragent.is_bot = false
-        AND year = {year}
-        AND month = {month}
-        AND day = {day}
-    GROUP BY
-        event.action,
-        template_name,
-        wiki
+        AND SIZE(event.template_names) = 1
 )
 
 SELECT
     '{from_date}' AS `date`,
-    template_data_events.wiki as wiki,
-    SUM(
-        CASE
-            WHEN has_template_data = false AND action = 'edit' THEN 1
-            ELSE 0
-        END
-    ) AS no_template_data_on_edit,
-    SUM(
-        CASE
-            WHEN has_template_data = true AND action = 'edit' THEN 1
-            ELSE 0
-        END
-    ) AS has_template_data_on_edit,
-    SUM(
-        CASE
-            WHEN has_template_data = false AND action = 'save' THEN 1
-            ELSE 0
-        END
-    ) AS no_template_data_on_save,
-    SUM(
-        CASE
-            WHEN has_template_data = true AND action = 'save' THEN 1
-            ELSE 0
-        END
-    ) AS has_template_data_on_save
-FROM
-    template_data_events,
-    template_dialog_events
-WHERE
-    template_data_events.wiki = template_dialog_events.wiki
-    AND template_data_events.template_name = template_dialog_events.template_name
+    template_dialog_events.wiki AS wiki,
+    COUNT(1) AS total,
+    COALESCE(has_template_data, false) AS has_template_data,
+    action
+FROM template_dialog_events
+LEFT JOIN template_data_events_grouped
+    ON template_data_events_grouped.wiki = template_dialog_events.wiki
+    AND template_data_events_grouped.template_name = template_dialog_events.template_name
 GROUP BY
-    template_data_events.wiki;
+    COALESCE(has_template_data, false),
+    action,
+    template_dialog_events.wiki;
