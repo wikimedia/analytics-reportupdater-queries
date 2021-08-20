@@ -76,3 +76,14 @@ reports:
       path: "{_metric}.{action}.hasTemplateData.{has_template_data}.byWiki.{wiki}"
       metrics:
         MediaWiki.VisualEditor.templateDialog: total
+
+  template_dialog_multi_part:
+    granularity: days
+    starts: 2021-08-20
+    type: hive
+    lag: 18000
+    execute: hive/template_dialog_multi_part
+    graphite:
+      path: "{_metric}.{action}.byMultiPart.{is_multi_part}.byWiki.{wiki}"
+      metrics:
+        MediaWiki.VisualEditor.templateDialog: total
