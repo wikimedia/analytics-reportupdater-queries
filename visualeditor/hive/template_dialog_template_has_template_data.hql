@@ -69,5 +69,5 @@ LEFT JOIN template_data_daily
     AND template_data_daily.template_name = template_dialog_events.template_name
 GROUP BY
     action,
-    COALESCE(has_template_data, false),
+    COALESCE(template_data_daily.has_template_data, false),
     template_dialog_events.wiki;
