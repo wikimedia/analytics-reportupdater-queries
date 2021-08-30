@@ -68,7 +68,7 @@ reports:
 
   template_dialog_template_has_template_data:
     granularity: days
-    starts: 2021-08-20
+    starts: 2021-08-19
     type: hive
     lag: 18000
     execute: hive/template_dialog_template_has_template_data
@@ -79,7 +79,7 @@ reports:
 
   template_dialog_multi_part:
     granularity: days
-    starts: 2021-08-20
+    starts: 2021-08-19
     type: hive
     lag: 18000
     execute: hive/template_dialog_multi_part
