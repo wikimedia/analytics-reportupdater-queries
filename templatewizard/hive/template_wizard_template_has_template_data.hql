@@ -19,10 +19,10 @@ template_data_events AS (
         AND day = {day}
 ),
 
--- Entry per template and whether it had template data at some point on a given day
-template_data_events_grouped AS (
+-- Entry per template and whether it had template data at any point during the day.
+template_data_daily AS (
     SELECT
-        MAX(has_template_data) AS has_template_data,
+        MAX(template_data_events.has_template_data) has_template_data,
         template_name,
         wiki
     FROM
@@ -63,14 +63,14 @@ template_wizard_events AS (
 SELECT
     '{from_date}' AS `date`,
     action,
-    COALESCE(has_template_data, false) AS has_template_data,
+    COALESCE(template_data_daily.has_template_data, false) AS has_template_data,
     COUNT(1) AS total,
     template_wizard_events.wiki AS wiki
 FROM template_wizard_events
-LEFT JOIN template_data_events
-    ON template_data_events.wiki = template_wizard_events.wiki
-    AND template_data_events.template_name = template_wizard_events.template_name
+LEFT JOIN template_data_daily
+    ON template_data_daily.wiki = template_wizard_events.wiki
+    AND template_data_daily.template_name = template_wizard_events.template_name
 GROUP BY
     action,
-    COALESCE(has_template_data, false),
+    COALESCE(template_data_daily.has_template_data, false),
     template_wizard_events.wiki;
