@@ -1,33 +1,33 @@
 #!/bin/bash
 hive -e "
-    WITH
-        slice AS (
-            SELECT
-                wiki_db,
-                SUM(IF(network_origin='wikimedia_labs', edit_count, 0)) AS wmcs_edits,
-                SUM(edit_count) AS total_edits,
-                ROUND(SUM(IF(network_origin='wikimedia_labs', edit_count, 0)) / SUM(edit_count), 3) AS wmcs_percent
-            FROM wmf.editors_daily
-            WHERE
-                month = substr('$1', 1, 7)
-            GROUP BY
-                wiki_db
-        ),
-        total AS (
-            SELECT
-                'TOTAL' AS wiki_db,
-                ROUND(SUM(wmcs_edits) / SUM(total_edits), 3) AS wmcs_percent
-            FROM slice
-        )
-    SELECT * FROM total
-    UNION ALL
-    SELECT
-        '$1' AS \`date\`,
-        wiki_db,
-        wmcs_percent
-    FROM slice
-    ORDER BY
-        wiki_db
-    LIMIT 10000
-    ;
+WITH
+    slice AS (
+        SELECT
+            wiki_db,
+            SUM(IF(network_origin='wikimedia_labs', edit_count, 0)) AS wmcs_edits,
+            SUM(edit_count) AS total_edits,
+            ROUND(SUM(IF(network_origin='wikimedia_labs', edit_count, 0)) / SUM(edit_count), 3) AS wmcs_percent
+        FROM wmf.editors_daily
+        WHERE
+            month = substr('$1', 1, 7)
+        GROUP BY
+            wiki_db
+    ),
+    total AS (
+        SELECT
+            'TOTAL' AS wiki_db,
+            ROUND(SUM(wmcs_edits) / SUM(total_edits), 3) AS wmcs_percent
+        FROM slice
+    )
+SELECT * FROM total
+UNION ALL
+SELECT
+    '$1' AS \`date\`,
+    wiki_db,
+    wmcs_percent
+FROM slice
+ORDER BY
+    wiki_db
+LIMIT 10000
+;
 " 2> /dev/null | grep -v parquet.hadoop | python $3/dynamic_pivot.py

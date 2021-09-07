@@ -1,25 +1,25 @@
 #!/bin/bash
 hive -e "
-    SELECT
-        '$1' AS \`date\`,
-        os_family,
-        os_major,
-        SUM(view_count) as view_count
-    FROM wmf.browser_general
-    WHERE
-        access_method IN ('desktop', 'mobile web') AND
-        -- Add partition pruning for start-date and end-date year and month
-        -- 1 month of data being ~100K, the overhead of having to filter 2 month is small
-        ((year = CAST(SUBSTR('$1', 1, 4) AS INT) AND month = CAST(SUBSTR('$1', 6, 2) AS INT))
-            OR (year = CAST(SUBSTR('$2', 1, 4) AS INT) AND month = CAST(SUBSTR('$2', 6, 2) AS INT))) AND
-        -- Add actual precise date filtering using CONCAT to build date based on partitions
-        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '$1' AND
-        CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2'
-    GROUP BY
-        '$1',
-        os_family,
-        os_major
-    ORDER BY view_count DESC
-    LIMIT 1000
-    ;
+SELECT
+    '$1' AS \`date\`,
+    os_family,
+    os_major,
+    SUM(view_count) as view_count
+FROM wmf.browser_general
+WHERE
+    access_method IN ('desktop', 'mobile web') AND
+    -- Add partition pruning for start-date and end-date year and month
+    -- 1 month of data being ~100K, the overhead of having to filter 2 month is small
+    ((year = CAST(SUBSTR('$1', 1, 4) AS INT) AND month = CAST(SUBSTR('$1', 6, 2) AS INT))
+        OR (year = CAST(SUBSTR('$2', 1, 4) AS INT) AND month = CAST(SUBSTR('$2', 6, 2) AS INT))) AND
+    -- Add actual precise date filtering using CONCAT to build date based on partitions
+    CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '$1' AND
+    CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2'
+GROUP BY
+    '$1',
+    os_family,
+    os_major
+ORDER BY view_count DESC
+LIMIT 1000
+;
 " 2> /dev/null | grep -v parquet.hadoop

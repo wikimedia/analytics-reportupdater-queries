@@ -1,35 +1,35 @@
 #!/bin/bash
 hive -e "
-    SET hive.mapred.mode = nonstrict;
-    WITH
-        slice AS (
-            SELECT *
-            FROM wmf.browser_general
-            WHERE
-                access_method IN ('desktop', 'mobile web') AND
-                -- Add partition pruning for start-date and end-date year and month
-                -- 1 month of data being ~100K, the overhead of having to filter 2 month is small
-                ((year = CAST(SUBSTR('$1', 1, 4) AS INT) AND month = CAST(SUBSTR('$1', 6, 2) AS INT))
-                    OR (year = CAST(SUBSTR('$2', 1, 4) AS INT) AND month = CAST(SUBSTR('$2', 6, 2) AS INT))) AND
-                -- Add actual precise date filtering using CONCAT to build date based on partitions
-                CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '$1' AND
-                CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2'
-        ),
-        total AS (
-            SELECT SUM(view_count) as view_count_total
-            FROM slice
-        )
-    SELECT
-        '$1' AS \`date\`,
-        browser_family,
-        browser_major,
-        SUM(view_count) / view_count_total AS \`percent\`
-    FROM slice JOIN total
-    GROUP BY
-        browser_family,
-        browser_major,
-        view_count_total
-    ORDER BY \`percent\` DESC
-    LIMIT 1000
-    ;
+SET hive.mapred.mode = nonstrict;
+WITH
+    slice AS (
+        SELECT *
+        FROM wmf.browser_general
+        WHERE
+            access_method IN ('desktop', 'mobile web') AND
+            -- Add partition pruning for start-date and end-date year and month
+            -- 1 month of data being ~100K, the overhead of having to filter 2 month is small
+            ((year = CAST(SUBSTR('$1', 1, 4) AS INT) AND month = CAST(SUBSTR('$1', 6, 2) AS INT))
+                OR (year = CAST(SUBSTR('$2', 1, 4) AS INT) AND month = CAST(SUBSTR('$2', 6, 2) AS INT))) AND
+            -- Add actual precise date filtering using CONCAT to build date based on partitions
+            CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) >= '$1' AND
+            CONCAT(year, '-', LPAD(month, 2, '0'), '-', LPAD(day, 2, '0')) < '$2'
+    ),
+    total AS (
+        SELECT SUM(view_count) as view_count_total
+        FROM slice
+    )
+SELECT
+    '$1' AS \`date\`,
+    browser_family,
+    browser_major,
+    SUM(view_count) / view_count_total AS \`percent\`
+FROM slice JOIN total
+GROUP BY
+    browser_family,
+    browser_major,
+    view_count_total
+ORDER BY \`percent\` DESC
+LIMIT 1000
+;
 " 2> /dev/null | grep -v parquet.hadoop
