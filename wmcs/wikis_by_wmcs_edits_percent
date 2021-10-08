@@ -12,20 +12,22 @@ WITH
             month = substr('$1', 1, 7)
         GROUP BY
             wiki_db
-    ),
-    total AS (
-        SELECT
-            'TOTAL' AS wiki_db,
-            ROUND(SUM(wmcs_edits) / SUM(total_edits), 3) AS wmcs_percent
-        FROM slice
     )
-SELECT * FROM total
+
+SELECT
+    '$1' AS \`date\`,
+    'TOTAL' AS wiki_db,
+    ROUND(SUM(wmcs_edits) / SUM(total_edits), 3) AS wmcs_percent
+FROM slice
+
 UNION ALL
+
 SELECT
     '$1' AS \`date\`,
     wiki_db,
     wmcs_percent
 FROM slice
+
 ORDER BY
     wiki_db
 LIMIT 10000
