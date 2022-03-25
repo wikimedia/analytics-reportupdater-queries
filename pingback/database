@@ -27,7 +27,7 @@ SELECT
     SUM(IF(event_database NOT LIKE 'mysql%' AND
         event_database != 'sqlite' AND
         event_database != 'postgres' AND
-        event_database != 'mssql', 1, 0)) AS \`Other\`
+        event_database != 'mssql', 1, 0)) AS \`other\`
 FROM numbered
 WHERE row_num = 1
 ;

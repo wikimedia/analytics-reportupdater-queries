@@ -41,7 +41,7 @@ SELECT
         event_mediawiki NOT LIKE '1.35%' AND
         event_mediawiki NOT LIKE '1.36%' AND
         event_mediawiki NOT LIKE '1.37%' AND
-        event_mediawiki NOT LIKE '1.38%', 1, 0)) AS \`Other\`
+        event_mediawiki NOT LIKE '1.38%', 1, 0)) AS \`other\`
 FROM numbered
 WHERE row_num = 1
 ;

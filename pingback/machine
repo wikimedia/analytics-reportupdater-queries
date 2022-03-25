@@ -33,7 +33,7 @@ SELECT
         event_machine != 'i686' AND
         event_machine != 'amd64' AND event_machine !='AMD64' AND
         event_machine NOT LIKE 'arm%' AND
-        event_machine NOT LIKE 'ppc%', 1, 0)) AS \`Other\`
+        event_machine NOT LIKE 'ppc%', 1, 0)) AS \`other\`
 FROM numbered
 WHERE row_num = 1
 ;

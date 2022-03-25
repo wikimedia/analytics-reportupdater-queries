@@ -41,15 +41,15 @@ WITH numbered AS (
 )
 SELECT
     '$1' AS \`date\`,
-    SUM(IF(normalizedMemoryLimit > 0 AND normalizedMemoryLimit <= 1, 1, 0)) AS \`limit <= 1M\`,
-    SUM(IF(normalizedMemoryLimit > 1 AND normalizedMemoryLimit <= 32, 1, 0)) AS \`1M < limit <= 32M\`,
-    SUM(IF(normalizedMemoryLimit > 32 AND normalizedMemoryLimit <= 64, 1, 0)) AS \`32M < limit <= 64M\`,
-    SUM(IF(normalizedMemoryLimit > 64 AND normalizedMemoryLimit <= 128, 1, 0)) AS \`64M < limit <= 128M\`,
-    SUM(IF(normalizedMemoryLimit > 128 AND normalizedMemoryLimit <= 256, 1, 0)) AS \`128M < limit <= 256M\`,
-    SUM(IF(normalizedMemoryLimit > 256 AND normalizedMemoryLimit <= 512, 1, 0)) AS \`256M < limit <= 512M\`,
-    SUM(IF(normalizedMemoryLimit > 512 AND normalizedMemoryLimit <= 1024, 1, 0)) AS \`512M < limit <= 1G\`,
-    SUM(IF(normalizedMemoryLimit > 1024, 1, 0)) AS \`limit > 1G\`,
-    SUM(IF(normalizedMemoryLimit < 0, 1, 0)) AS \`Non-numeric\`
+    SUM(IF(normalizedMemoryLimit > 0 AND normalizedMemoryLimit <= 1, 1, 0)) AS \`limit <= 1m\`,
+    SUM(IF(normalizedMemoryLimit > 1 AND normalizedMemoryLimit <= 32, 1, 0)) AS \`1m < limit <= 32m\`,
+    SUM(IF(normalizedMemoryLimit > 32 AND normalizedMemoryLimit <= 64, 1, 0)) AS \`32m < limit <= 64m\`,
+    SUM(IF(normalizedMemoryLimit > 64 AND normalizedMemoryLimit <= 128, 1, 0)) AS \`64m < limit <= 128m\`,
+    SUM(IF(normalizedMemoryLimit > 128 AND normalizedMemoryLimit <= 256, 1, 0)) AS \`128m < limit <= 256m\`,
+    SUM(IF(normalizedMemoryLimit > 256 AND normalizedMemoryLimit <= 512, 1, 0)) AS \`256m < limit <= 512m\`,
+    SUM(IF(normalizedMemoryLimit > 512 AND normalizedMemoryLimit <= 1024, 1, 0)) AS \`512m < limit <= 1g\`,
+    SUM(IF(normalizedMemoryLimit > 1024, 1, 0)) AS \`limit > 1g\`,
+    SUM(IF(normalizedMemoryLimit < 0, 1, 0)) AS \`non-numeric\`
 FROM numbered
 WHERE row_num = 1
 ;
