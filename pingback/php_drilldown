@@ -40,7 +40,7 @@ SELECT
         event_php NOT LIKE '7.4%' AND
         event_php NOT LIKE '8.0%' AND
         event_php NOT LIKE '8.1%' AND
-        event_php NOT LIKE '8.2%', 1, 0)) AS \`Other\`
+        event_php NOT LIKE '8.2%', 1, 0)) AS \`other\`
 FROM numbered
 WHERE
     row_num = 1 AND

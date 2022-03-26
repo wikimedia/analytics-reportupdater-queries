@@ -24,9 +24,9 @@ SELECT
     SUM(IF(event_machine = 'i386', 1, 0)) AS \`i386\`,
     SUM(IF(event_machine = 'i586', 1, 0)) AS \`i586\`,
     SUM(IF(event_machine = 'i686', 1, 0)) AS \`i686\`,
-    SUM(IF(event_machine = 'amd64' OR event_machine ='AMD64', 1, 0)) AS \`AMD64\`,
-    SUM(IF(event_machine LIKE 'arm%', 1, 0)) AS \`ARM\`,
-    SUM(IF(event_machine LIKE 'ppc%', 1, 0)) AS \`PPC\`,
+    SUM(IF(event_machine = 'amd64' OR event_machine ='AMD64', 1, 0)) AS \`amd64\`,
+    SUM(IF(event_machine LIKE 'arm%', 1, 0)) AS \`arm\`,
+    SUM(IF(event_machine LIKE 'ppc%', 1, 0)) AS \`ppc\`,
     SUM(IF(event_machine != 'x86_64' AND
         event_machine != 'i386' AND
         event_machine != 'i586' AND
