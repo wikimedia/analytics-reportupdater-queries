@@ -1,5 +1,0 @@
-cawiki
-enwiki
-dewiki
-trwiki
-fawiki

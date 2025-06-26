@@ -1,6 +1,0 @@
-reports:
-    daily_abuse_filter_count:
-        granularity: days
-        starts: 2020-03-01
-        lag: 10800 # wait 3 hour to compute last day
-        type: script
